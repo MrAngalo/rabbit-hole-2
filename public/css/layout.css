@@ -1,0 +1,62 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.content {
+  background: #adc0c5;
+  min-width: 650px;
+  width: 100%;
+  height: 100%;
+}
+
+header {
+  background: #298d4a;
+  padding: 0 5%;
+  width: 90%;
+  height: 40px;
+}
+
+main {
+  padding: 10px 15% 30px;
+  width: 70%;
+  height: calc(100% - 100px);
+  overflow-y: auto;
+}
+
+footer {
+  background: #61726a;
+  padding: 0 5%;
+  width: 90%;
+  height: 20px;
+}
+
+.button {
+  border: 0;
+  box-shadow: #4e4e4e -1px -1px 4px 1px;
+  transform: translate(-2px, -2px);
+  background: #799ce6;
+  cursor: pointer;
+}
+
+a:link, a:visited, header {
+  /* unvisited link */
+  color: #051f02;
+}
+
+a:hover {
+  /* mouse over link */
+  color: #c4eab1;
+}
+
+a:active {
+  /* selected link */
+  color: #8bc96e;
+}
+
+.tenor-footer {
+  padding: 10px 0;
+  width: 150px;
+  float: right;
+}

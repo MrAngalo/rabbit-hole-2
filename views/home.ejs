@@ -1,0 +1,21 @@
+<div class="title">
+  <h1>Rabbit Search Game</h1>
+</div>
+<div class="description-wrapper">
+  <div class="rabbit-gif-wrapper">
+    <img class="rabbit-gif" src="https://media.tenor.com/Add9qffI-NgAAAAC/rabbit-stare.gif" alt="Rabbit Gif">
+    <img class="tenor-footer" src="/img/tenor/PB_tenor_logo_blue_horizontal.svg" alt="Tenor Footer">
+  </div>
+  <div class="description">
+    <p>
+      Choose your own adventure and build upon it! Your choices were built by players,
+      and you can continue the chain. Everyone starts on the same starting point. Every
+      scenario presents a short story, a fitting GIF, and three branching choices. Can
+      you explore them all?
+    </p>
+    <form action="/scene/0" method="GET">
+      <button class="button" type="submit">Enter Rabbit Hole</button>
+    </form>
+    <p class="total">There are a total of <%= locals.scene_count || 0 %> paths</p>
+  </div>
+</div>

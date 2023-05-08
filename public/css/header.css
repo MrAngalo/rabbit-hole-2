@@ -1,0 +1,67 @@
+.navigation {
+  width: 100%;
+  margin: auto;
+  padding: 5px 0;
+  display: flex;
+  justify-content: space-between;
+}
+.navigation .navigation-left {
+  width: 200px;
+}
+.navigation div {
+  float: left;
+  margin-left: 5px;
+}
+.navigation a {
+  display: block;
+  height: 100%;
+}
+.navigation .menu {
+  height: 100%;
+  margin-left: 20px;
+}
+.navigation .icon {
+  width: 30px;
+  height: 30px;
+  padding: 0px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+.navigation .icon * {
+  width: 70%;
+  height: 70%;
+  padding: 15%;
+  border-radius: 5px;
+  background: none;
+}
+.navigation .label {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.navigation .search input[type=number] {
+  width: 100px;
+  height: 30px;
+  padding: 0 5px;
+  border: none;
+  border-radius: 5px;
+  text-align: left;
+}
+.navigation .hint-input {
+  position: relative;
+}
+.navigation .hint-input .hint {
+  opacity: 0;
+  margin: 10px 0;
+  padding: 5px;
+  border-radius: 5px;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #8795a9;
+  transition: 0.25s;
+}
+.navigation .hint-input input:hover ~ .hint {
+  opacity: 1;
+}

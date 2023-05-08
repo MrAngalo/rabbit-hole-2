@@ -1,0 +1,128 @@
+<% if (locals.error || messages.error) { %>
+  <%= locals.error || messages.error %> 
+<% } %>
+<div class="title">
+  <h1>Create Scene</h1>
+</div>
+<div class="disclaimer">
+  <p>
+    <b>IMPORTANT:</b> You are about to create a continuation of the previous scene
+    <a href="/scene/<%= locals.parent.id %>">(<%= locals.parent.title%>)</a>.
+    You will come up with a title, description, and gif.
+  </p>
+  <p style="color:rgb(201, 0, 0)">
+    Your scene will be public and subject to community scrutiny. Other users will decide the
+    longevity of this scene through voting. Your account will be associated with your post.
+  </p>
+  <p style="color:rgb(201, 0, 0)">
+    You are logged in as <%= locals.user.username %>
+  </p>
+  <p>
+    Please read the <a href="/guidelines" target="_blank">Community Guidelines</a>.
+  </p>
+  <form action="/scene/<%= locals.parent.id %>" method="GET">
+    <button class="button" type="submit">Exit to safety</button>
+  </form>
+</div>
+<div class="description-wrapper">
+  <div class="rabbit-gif-wrapper">
+    <img class="rabbit-gif tenor-load" gif-id="<%= locals.parent.gifId %>" token="<%= csrfToken %>" alt="Rabbit Gif">
+    <img class="tenor-footer" src="/img/tenor/PB_tenor_logo_blue_horizontal.svg" alt="Tenor Footer">
+  </div>
+  <div class="description">
+    <h2>Parent Scene Information:</h2>
+    <p>Title: <%= locals.parent.title %></p>
+    <p>Description: <%= locals.parent.description.replaceAll('\\n', ' ') %></p>
+  </div>
+</div>
+<hr>
+<div class="title">
+  <h1>Your Scene Information</h1>
+</div>
+<form action="/create/<%= locals.parent.id %>" method="POST">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="description-wrapper">
+    <div class="rabbit-gif-wrapper">
+      <img class="rabbit-gif preview-gif" src="/img/no-gift.png" alt="Rabbit Gif">
+      <img class="tenor-footer" src="/img/tenor/PB_tenor_logo_blue_horizontal.svg" alt="Tenor Footer">
+    </div>
+    <div class="description">
+      <h2>Title:</h2>
+      <p>
+        Your title should summarize the action. It will appear as the page's title
+        and parent's choice button
+        <a href="/scene/<%= locals.parent.id %>" target="_blank">(<%= locals.parent.title%>).</a>
+        Make it short
+      </p>
+      <p>
+        Ex. (Jump The Bolder, Stare At Stranger, Throw Bowling Ball)
+      </p>
+      <div class="input-wrapper">
+        <label for="title"><b>Title:</b></label>
+        <input type="text" id="title" name="title" placeholder="Snap the Gauntlet" value="<%= (locals.path || {}).title %>" required>
+      </div>
+      <h2>Description:</h2>
+      <p>
+        Describe how the story continues. Write it in the second person (use YOU instead of I).
+        Release your creativity. The longer descriptions are, the better. End your descriptions
+        in such way to promote expansion. (how would others continue it?)
+      </p>
+      <p>
+        The Description expands as horizontal space increases. To force
+        a new line, explicitlypress enter or use <b>\n</b> in your sentences.
+      </p>
+      <p>
+        Make sure you do not have no grammatical errors. Use
+        <a href="https://www.grammarly.com/" target="_blank" rel="noopener noreferrer">Grammarly</a>
+        to double check!  
+      </p>
+      <p style="color:rgb(201, 0, 0)">
+        Your must comply with the <a href="/guidelines" target="_blank">Community Guidelines</a>
+      </p>
+      <div class="input-wrapper">
+          <label for="description"><b>Desc:</b></label>
+          <textarea id="description" name="description" placeholder="You decided to..." required onload="this.value = this.value;"><%= (locals.path || {}).description %></textarea><br>
+      </div>
+    </div>
+  </div>
+  <div class="description-wrapper">
+    <div class="rabbit-gif-wrapper">
+      <img class="rabbit-gif preview-gif" src="/img/no-gift.png" alt="Rabbit Gif">
+      <img class="tenor-footer" src="/img/tenor/PB_tenor_logo_blue_horizontal.svg" alt="Tenor Footer">
+    </div>
+    <div class="description">
+      <h2>GIF:</h2>
+      <p>
+        Your GIF should go along with your title and description. We use
+        <a href="https://tenor.com/" target="_blank" rel="noopener noreferrer">Tenor</a>
+        to source them. Use the selector bellow or paste in the URL (URLs must be from tenor.com).
+      </p>
+      <div class="tenor-selector">
+        <div class="flex">
+          <input id="tenor-search"type="text" placeholder="Search Tenor" class="text" token="<%= csrfToken %>">
+          <button type="button">Search</button>
+        </div>
+        <div class="searched_content"></div>
+      </div>
+      <img class="tenor-footer" src="/img/tenor/PB_tenor_logo_blue_horizontal.svg" alt="Tenor Footer">
+      <p>
+        Cannot find your GIF? enter the ID bellow directly. It is the numbers at the end of the URL.
+        Ex. (https://tenor.com/view/bruh-moment-gif-<span style="color:rgb(201, 0, 0)">23616422</span>)
+      </p>
+      <div class="input-wrapper">
+        <label for="gifId"><b>GIF ID:</b></label>
+        <input type="text" id="gifId" name="gifId" placeholder="23616422" token="<%= csrfToken %>" value="<%= (locals.path || {}).gifId %>" required>
+      </div>
+      <p>You are all done! Make sure to review before you submit!</p>
+      <div class="tos-wrapper">
+        <input type="checkbox" id="tos" name="tos" value="1" required>
+        <label for="tos">I would look very stupid to blindly check this without reading the <a href="/guidelines" target="_blank">Community Guidelines</a></label>
+      </div>
+      <div>
+        <button class="button" type="submit">Submit Scene</button>
+      </div>
+    </div>
+  </div>
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="/js/create.js"></script>

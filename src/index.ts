@@ -1,0 +1,157 @@
+require('dotenv').config();
+
+import express from 'express';
+import expressLayout from 'express-ejs-layouts';
+import passport from 'passport';
+import flash from 'express-flash';
+import session from 'express-session';
+import PGSimple from 'connect-pg-simple';
+import { DataSource } from 'typeorm';
+import { PostgresDriver } from 'typeorm/driver/postgres/PostgresDriver';
+import initPassport from './utils/passport-config';
+import createSceneRouter from './routes/createSceneRouter';
+import authenticationRouter from './routes/authenticationRouter';
+import fetchSceneRouter from './routes/fetchSceneRouter';
+import guidelineRouter from './routes/guidelinesRouter';
+import homeRouter from './routes/homeRouter';
+import csrf from 'csurf';
+import { addFileNameToLocals, configLocals, handleErrors } from './routes/middleware';
+import { Scene } from './entities/Scene';
+import { User } from './entities/User';
+import { SceneRating, UserRating } from './entities/Rating';
+import { Token } from './entities/Token';
+import { initTenor } from './utils/tenor-utils';
+import fetchTenorRouter from './routes/fetchTenorRouter';
+
+async function mainApp() {
+  
+  // ************************************************** //
+  //                      SET UP                        //
+  // ************************************************** //
+  
+  //connects to postgresql database
+  const dataSource = new DataSource({
+    type: 'postgres',
+    url: process.env.DATABASE_URL,
+    //ssl: { rejectUnauthorized: false },
+    entities: [ Scene, User, Token, UserRating, SceneRating ],
+    synchronize: false
+  });
+  await dataSource.initialize(); //establishes connection to postgresql databse
+
+  var scene_count = (await Scene.count()) -1; //removes root scene
+  console.log(`Total paths: ${scene_count}`);
+
+  // const pool = new Pool({
+  //   connectionString: process.env.DATABASE_URL,
+  //   //ssl: { rejectUnauthorized: false }
+  // });
+  // const client = await pool.connect();
+  
+  //sets up express session with postgresql database
+  const sessionConfig = {
+    store: new (PGSimple(session))({
+      //pool: pool,
+      pool: (dataSource.driver as PostgresDriver).master,
+      createTableIfMissing: true
+    }),
+    secret: process.env.SESSION_SECRET || '',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 4 * 60 * 60 * 1000 } // 4 hours
+  }
+  
+  //initializes passport (keeps track of login authentication)
+  initPassport(passport,
+    async (email: string) => await dataSource.getRepository(User).createQueryBuilder('user').select(['user', 'user.password']).where('user.email = :email', { email }).getOne(),
+    async (id: number) => await dataSource.getRepository(User).createQueryBuilder('user').select(['user', 'user.password']).where('user.id = :id', { id }).getOne()
+  );
+  
+  //sets up tenor (gif library)
+  const Credentials:any = {
+    "Key": process.env.TENOR_KEY, // https://developers.google.com/tenor/guides/quickstart
+    "Filter": "off", // "off", "low", "medium", "high", not case sensitive
+    "Locale": "en_US", // Your locale here, case-sensitivity depends on input
+    "MediaFilter": "minimal", // either minimal or basic, not case sensitive
+    "DateFormat": "D/MM/YYYY - H:mm:ss A" // Change this accordingly
+  };
+  const Tenor = require("tenorjs").client(Credentials);
+  Credentials.Gate = "https://g.tenor.com/v1"; //overrides the value set in the above function
+  // Credentials.Gate = "https://tenor.googleapis.com/v2";
+  initTenor(Tenor);
+
+  //sets up csrf tokens
+  const csrfProtection = csrf({
+    // ignoreMethods: ['POST', 'GET', 'HEAD', 'OPTIONS']
+  });
+
+  // if (!(await tenorIdsExist(["23616422"]))) {
+  //   console.log("");
+  // }
+
+  // ************************************************** //
+  //                    Express App                     //
+  // ************************************************** //
+  
+  var app = express();
+  var port = process.env.PORT || 5000;
+
+  //Static Files
+  app.use(express.static('public'));
+  app.use('/img', express.static(__dirname + 'public/img'));
+  app.use('/css', express.static(__dirname + 'public/css'));
+  app.use('/js', express.static(__dirname + 'public/js'));
+
+  //Templating Engine
+  app.set('view engine', 'ejs');
+  
+  //Middleware Configuration
+
+  //ejs
+  app.use(expressLayout);
+  //parses incoming requests
+  app.use(express.urlencoded({ extended: false }));
+  //loads cookies
+  app.use(flash());
+  app.use(session(sessionConfig));
+  //csrf
+  app.use(csrfProtection);
+  //loads active user
+  app.use(passport.initialize());
+  app.use(passport.session());
+  //My middleware
+  //load default values to locals
+  app.use(addFileNameToLocals)
+  app.use(configLocals({ scene_count }));
+
+  //page routers
+  app.use(homeRouter());
+  app.use(guidelineRouter());
+  app.use(authenticationRouter({ passport }));
+  app.use(fetchSceneRouter({ dataSource }));
+  app.use(createSceneRouter({ dataSource }));
+  app.use(fetchTenorRouter({ Tenor }));
+
+  //handle errors
+  app.use(handleErrors)
+
+  //clean up on exit
+  process.on('exit', function(_code) {
+    console.log('Shutting down server...');
+    dataSource.destroy();
+    // client.release();
+    console.log('Database saved!');
+  });
+
+  //handles ctrl+c
+  process.on('SIGINT', function() {
+    process.exit();
+  });
+
+  app.listen(port);
+  console.log(`Server running on port ${port}`);
+}
+
+mainApp().catch((error) => {
+  console.error(error);
+});

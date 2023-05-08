@@ -1,0 +1,34 @@
+<div class="error"><%= locals.err %></div>
+<div class="title">
+  <div><h1><%= scene.title %></h1></div>
+  <div>Created by: <%= scene.creator_name %></div>
+  <div>Created on: <%= moment(new Date(scene.created)).format('Do MMMM, YYYY') %></div>
+</div>
+<div class="description-wrapper">
+  <div class="rabbit-gif-wrapper">
+    <img class="rabbit-gif tenor-load" gif-id="<%= scene.gifId %>" token="<%= csrfToken %>" alt="Rabbit Gif">
+    <img class="tenor-footer" src="/img/tenor/PB_tenor_logo_blue_horizontal.svg" alt="Tenor Footer">
+  </div>
+  <div class="description">
+    <% var lines = scene.description.split("\\n"); %>
+    <% for (var i = 0; i < lines.length; i++) { %>
+      <p><%= lines[i] %></p>
+    <% } %>
+    <div class="choice-wrapper">
+      <% for (var i = 0; i < options.length; i++) { %>
+        <% if (options[i].id != -1) { %> 
+          <form action="/scene/<%= options[i].id %>" method="GET">
+            <button class="button choice" type="submit"><%= options[i].title %></button>
+          </form>
+        <% } else { %>
+          <form action="/create/<%= scene.id %>" method="GET">
+            <button class="button choice create" type="submit"><%= options[i].title %></button>
+          </form>
+        <% } %> 
+      <% } %>
+    </div>
+    <p>Scene ID: <%= scene.id %></p>
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="/js/scene.js"></script>
