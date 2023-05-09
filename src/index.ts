@@ -106,7 +106,6 @@ async function mainApp() {
   // else if (process.env.TENOR_API_VERSION == '2') {
     // Credentials.Gate = "https://tenor.googleapis.com/v2";
   // }
-  
   initTenor(Tenor);
 
   //sets up csrf tokens
