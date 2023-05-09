@@ -26,6 +26,30 @@ import fetchTenorRouter from './routes/fetchTenorRouter';
 async function mainApp() {
   
   // ************************************************** //
+  //                    ENV CHECK                       //
+  // ************************************************** //
+
+  if (!process.env.DATABASE_URL) {
+    console.log("Failed to start: Environment variable DATABASE_URL not set");
+    process.exit();
+  }
+
+  if (!process.env.SESSION_SECRET) {
+    console.log("Failed to start: Environment variable SESSION_SECRET not set");
+    process.exit();
+  }
+
+  if (!process.env.TENOR_API_VERSION) {
+    console.log("Failed to start: Environment variable TENOR_API_VERSION not set");
+    process.exit();
+  }
+
+  if (!process.env.TENOR_KEY) {
+    console.log("Failed to start: Environment variable TENOR_KEY not set");
+    process.exit();
+  }
+
+  // ************************************************** //
   //                      SET UP                        //
   // ************************************************** //
   
@@ -76,8 +100,13 @@ async function mainApp() {
     "DateFormat": "D/MM/YYYY - H:mm:ss A" // Change this accordingly
   };
   const Tenor = require("tenorjs").client(Credentials);
-  Credentials.Gate = "https://g.tenor.com/v1"; //overrides the value set in the above function
-  // Credentials.Gate = "https://tenor.googleapis.com/v2";
+  if (process.env.TENOR_API_VERSION == '1') {
+    Credentials.Gate = "https://g.tenor.com/v1"; //overrides the value set in the above function
+  }
+  // else if (process.env.TENOR_API_VERSION == '2') {
+    // Credentials.Gate = "https://tenor.googleapis.com/v2";
+  // }
+  
   initTenor(Tenor);
 
   //sets up csrf tokens
@@ -94,7 +123,7 @@ async function mainApp() {
   // ************************************************** //
   
   var app = express();
-  var port = process.env.PORT || 5000;
+  var port = process.env.PORT || 9000;
 
   //Static Files
   app.use(express.static('public'));
