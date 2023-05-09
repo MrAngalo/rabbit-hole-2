@@ -12,4 +12,4 @@ ENV PORT=9000
 
 EXPOSE 9000
 
-CMD ["node", "."]
+CMD npm start
