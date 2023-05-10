@@ -15,7 +15,8 @@
             <form id="search-form" action="/scene" method="GET">
                 <div class="hint-input">
                     <label for="id">Scene ID #</label>
-                    <input type="number" id="id" name="id" value="0" min="0"
+                    <input type="number" id="id" name="id" min="0"
+                        value="<%= locals.scene?.id || 0 %>"
                         max="<%= locals.globals.scene_count || 0 %>"
                         oninput="value=Math.min(Math.max(value, 0),
                         parseInt('<%= locals.globals.scene_count || 0 %>'));">
