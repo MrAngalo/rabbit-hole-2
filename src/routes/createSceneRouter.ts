@@ -105,7 +105,7 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
     if (error) {
         (req.session as any).myinfo = { error };
         (req.session as any).fields = req.body;
-        res.redirect('/create');
+        res.redirect(req.route);
         return;
         // return res.render('create', { error, parent, fields: req.body, csrfToken: req.csrfToken() });
     }
