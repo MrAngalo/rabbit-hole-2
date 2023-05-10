@@ -15,7 +15,7 @@ import fetchSceneRouter from './routes/fetchSceneRouter';
 import guidelineRouter from './routes/guidelinesRouter';
 import homeRouter from './routes/homeRouter';
 import csrf from 'csurf';
-import { addFileNameToLocals, configLocals, handleErrors } from './routes/middleware';
+import { configLocals, handleErrors } from './routes/middleware';
 import { Scene } from './entities/Scene';
 import { User } from './entities/User';
 import { SceneRating, UserRating } from './entities/Rating';
@@ -59,7 +59,7 @@ async function mainApp() {
     url: process.env.DATABASE_URL,
     //ssl: { rejectUnauthorized: false },
     entities: [ Scene, User, Token, UserRating, SceneRating ],
-    synchronize: false
+    synchronize: true
   });
   await dataSource.initialize(); //establishes connection to postgresql databse
 
@@ -152,7 +152,6 @@ async function mainApp() {
   app.use(passport.session());
   //My middleware
   //load default values to locals
-  app.use(addFileNameToLocals)
   app.use(configLocals({ globals }));
 
   //page routers

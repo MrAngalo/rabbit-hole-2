@@ -36,7 +36,15 @@ function authenticationRouter(config:{passport: PassportStatic}) {
         const rawPwd:string = req.body.password;
 
         var error = validateRegistration(username, email, rawPwd);
-        if (error != null) return res.render("register", {error});
+
+        // TODO: check if username / email is taken
+
+        if (error != null) {
+            (req.session as any).myinfo = { error };
+            (req.session as any).fields = req.body;
+            res.redirect('/register');
+            return;
+        }
 
         try {
             const hashPwd = await bcrypt.hash(rawPwd, 10);
@@ -47,17 +55,21 @@ function authenticationRouter(config:{passport: PassportStatic}) {
             });
             await user.save();
 
-            const token = Token.create({
-                owner: user,
-                value: crypto.randomBytes(32).toString('hex'),
-                expires: 48*60*60*1000 // 48 hours to verify
-            })
-            await token.save();
+            // const token = Token.create({
+            //     owner: user,
+            //     value: crypto.randomBytes(32).toString('hex'),
+            //     expires: 48*60*60*1000 // 48 hours to verify
+            // })
+            // await token.save();
             
             res.redirect('/login');
 
         } catch (err) {
-            return res.render("register", {error: 'Something has gone wrong, please try again!'});
+            console.log(err);
+            (req.session as any).myinfo = {error: 'Something has gone wrong, please try again!'};
+            (req.session as any).fields = req.body;
+            res.redirect('/register');
+            return;
         }
     });
 
@@ -70,8 +82,8 @@ function authenticationRouter(config:{passport: PassportStatic}) {
     router.post('/logout', checkAuthenticated, function (req, res, next) {
         req.logOut(function(err) {
             if (err) return next(err);
+            res.redirect('/login');
         });
-        res.redirect('/login');
     });
 
     return router;

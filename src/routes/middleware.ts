@@ -1,27 +1,31 @@
 import { NextFunction, Request, Response } from 'express';
 import moment from 'moment';
 
-var middlewares = { addFileNameToLocals, configLocals, checkAuthenticated, checkNotAuthenticated, handleErrors};
+var middlewares = { configLocals, checkAuthenticated, checkNotAuthenticated, handleErrors};
 module.exports = middlewares;
 export = middlewares;
 
 function configLocals(config:{globals:any}) {
     return function (req:Request, res:Response, next: NextFunction) {
-        res.locals.user = req.user;
-        res.locals.moment = moment;
-        // res.locals.scene_count = config.scene_count;
-        res.locals.globals = config.globals;
+
+        (res as any).E6M5JTT6a8gaNZ = res.render;
+        
+        res.render = function (view: string, options?: object, fn?: (err: Error, html: string) => void) {
+            res.locals.filename = view.split('\\').pop()?.split('/').pop();
+            res.locals.user = req.user;
+            res.locals.moment = moment;
+            res.locals.globals = config.globals || {};
+            res.locals.myinfo = (req.session as any).myinfo || req.flash();
+            res.locals.fields = (req.session as any).fields || {};
+
+            (req.session as any).myinfo = null;
+            (req.session as any).fields = null;
+
+            (res as any).E6M5JTT6a8gaNZ(view, options, fn)
+        }
+
         next();
     }
-}
-
-function addFileNameToLocals(req:Request, res:Response, next: NextFunction) {
-    (res as any).E6M5JTT6a8gaNZ = res.render;
-    res.render = function (view: string, options?: object, fn?: (err: Error, html: string) => void) {
-      res.locals.filename = view.split('\\').pop()?.split('/').pop();
-      (res as any).E6M5JTT6a8gaNZ(view, options, fn)
-    }
-    next();
 }
 
 function checkAuthenticated(req:Request, res:Response, next: NextFunction) {

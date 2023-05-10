@@ -20,19 +20,19 @@ function validateRegistration(uname:string, email:string, rawPwd:string) {
       return `Password must contain 8 characters!`;
 
     if (rawPwd.match(/\s/))
-      return `Username cannot contain spaces!`;
+      return `Password cannot contain spaces!`;
 
     if (!rawPwd.match(/^[A-Za-z0-9!@#$%^&*]+$/))
       return `Password must contain valid characters!`;
 
-    if (!rawPwd.match(/[A-Z]/g))
-      return `Password must contain one uppercase letter`;
+    // if (!rawPwd.match(/[A-Z]/g))
+    //   return `Password must contain one uppercase letter`;
 
     if (!rawPwd.match(/[0-9]/g))
       return `Password must contain one number`;
     
-    if (!rawPwd.match(/[!@#$%^&*]/g))
-      return `Password must contain one special character`;
+    // if (!rawPwd.match(/[!@#$%^&*]/g))
+    //   return `Password must contain one special character`;
 
     return null;
   }

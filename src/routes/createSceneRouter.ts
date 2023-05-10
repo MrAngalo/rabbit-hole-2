@@ -103,7 +103,11 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
     })();
 
     if (error) {
-        return res.render('create', { error, parent, fields: req.body, csrfToken: req.csrfToken() });
+        (req.session as any).myinfo = { error };
+        (req.session as any).fields = req.body;
+        res.redirect('/create');
+        return;
+        // return res.render('create', { error, parent, fields: req.body, csrfToken: req.csrfToken() });
     }
 
     const scene = Scene.create({

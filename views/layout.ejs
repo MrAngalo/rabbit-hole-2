@@ -11,7 +11,12 @@
     <body>
         <div class="content">
             <header><%- include('header'); %></header>
-            <main><%- body %></main>
+            <main>
+                <% if (myinfo.error) { %>
+                    <div class="error"><%= myinfo.error %></div>
+                <% } %>
+                <%- body %>
+            </main>
             <footer>
                 &copy; Copyright <%= moment().year(); %> Rabbit Search | Guilherme Silva
             </footer>

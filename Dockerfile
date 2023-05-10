@@ -8,8 +8,8 @@ RUN npm install
 
 COPY . .
 
-ENV PORT=9000
+ENV PORT=5000
 
-EXPOSE 9000
+EXPOSE 5000
 
 CMD npm start
