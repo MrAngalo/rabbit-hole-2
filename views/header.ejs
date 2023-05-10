@@ -16,10 +16,10 @@
                 <div class="hint-input">
                     <label for="id">Scene ID #</label>
                     <input type="number" id="id" name="id" value="0" min="0"
-                        max="<%= locals.scene_count || 0 %>"
+                        max="<%= locals.globals.scene_count || 0 %>"
                         oninput="value=Math.min(Math.max(value, 0),
-                        parseInt('<%= locals.scene_count || 0 %>'));">
-                    <div class="hint">There are <%= locals.scene_count || 0 %> IDs!</div>
+                        parseInt('<%= locals.globals.scene_count || 0 %>'));">
+                    <div class="hint">There are <%= locals.globals.scene_count || 0 %> IDs!</div>
                 </div>
                 <div>
                     <button class="icon button" type="submit">

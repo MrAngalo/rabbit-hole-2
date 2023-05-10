@@ -5,11 +5,12 @@ var middlewares = { addFileNameToLocals, configLocals, checkAuthenticated, check
 module.exports = middlewares;
 export = middlewares;
 
-function configLocals(config:{scene_count:number}) {
+function configLocals(config:{globals:any}) {
     return function (req:Request, res:Response, next: NextFunction) {
         res.locals.user = req.user;
         res.locals.moment = moment;
-        res.locals.scene_count = config.scene_count;
+        // res.locals.scene_count = config.scene_count;
+        res.locals.globals = config.globals;
         next();
     }
 }

@@ -63,8 +63,11 @@ async function mainApp() {
   });
   await dataSource.initialize(); //establishes connection to postgresql databse
 
-  var scene_count = (await Scene.count()) -1; //removes root scene
-  console.log(`Total paths: ${scene_count}`);
+  var globals = {
+    scene_count: (await Scene.count()) -1 //removes root scene
+  }
+
+  console.log(`Total paths: ${globals.scene_count}`);
 
   // const pool = new Pool({
   //   connectionString: process.env.DATABASE_URL,
@@ -150,14 +153,14 @@ async function mainApp() {
   //My middleware
   //load default values to locals
   app.use(addFileNameToLocals)
-  app.use(configLocals({ scene_count }));
+  app.use(configLocals({ globals }));
 
   //page routers
   app.use(homeRouter());
   app.use(guidelineRouter());
   app.use(authenticationRouter({ passport }));
   app.use(fetchSceneRouter({ dataSource }));
-  app.use(createSceneRouter({ dataSource }));
+  app.use(createSceneRouter({ dataSource, globals }));
   app.use(fetchTenorRouter({ Tenor }));
 
   //handle errors

@@ -9,7 +9,7 @@ module.exports = createSceneRouter
 export = createSceneRouter;
 
 const router = express.Router();
-function createSceneRouter(config:{dataSource: DataSource}) {
+function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
 
   router.get('/create', function(req, res) {
     var id:string = req.query.id+'' || '0';
@@ -116,6 +116,8 @@ function createSceneRouter(config:{dataSource: DataSource}) {
     });
 
     await scene.save();
+
+    config.globals.scene_count++;
 
     res.redirect(`/scene/${scene.id}`);
   });
