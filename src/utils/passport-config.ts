@@ -10,14 +10,14 @@ async function initPassport(passport:PassportStatic, getUserByEmail:(email: stri
   const authenticateUser = async (email:string, password:string, done:(err: any, user?: any, options?: any) => void) => {
       const user = await getUserByEmail(email);
       if (user == null)
-          return done(null, false, { message: 'No user with that email' });
+          return done(null, false, { message: 'Error: No user with that email' });
       
       try {
         
         if (await bcrypt2.compare(password, user.password)) {
           return done(null, user);
         } else {
-          return done(null, false, { message: 'Password incorrect'});
+          return done(null, false, { message: 'Error: Password incorrect'});
         }
         
       } catch (err) {

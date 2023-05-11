@@ -60,7 +60,7 @@
       </p>
       <div class="input-wrapper">
         <label for="title"><b>Title:</b></label>
-        <input type="text" id="title" name="title" placeholder="Snap the Gauntlet" value="<%= (locals.path || {}).title %>" required>
+        <input type="text" id="title" name="title" placeholder="Snap the Gauntlet" value="<%= (fields && fields.title) ? fields.title : '' %>" required>
       </div>
       <h2>Description:</h2>
       <p>
@@ -83,7 +83,7 @@
       </p>
       <div class="input-wrapper">
           <label for="description"><b>Desc:</b></label>
-          <textarea id="description" name="description" placeholder="You decided to..." required onload="this.value = this.value;"><%= (locals.path || {}).description %></textarea><br>
+          <textarea id="description" name="description" placeholder="You decided to..." required onload="this.value = this.value;"><%= (fields && fields.description) ? fields.description : '' %></textarea><br>
       </div>
     </div>
   </div>
@@ -113,7 +113,7 @@
       </p>
       <div class="input-wrapper">
         <label for="gifId"><b>Gif id:</b></label>
-        <input type="text" id="gifId" name="gifId" placeholder="23616422" token="<%= csrfToken %>" value="<%= (locals.path || {}).gifId %>" required>
+        <input type="text" id="gifId" name="gifId" placeholder="23616422" token="<%= csrfToken %>" value="<%= (fields && fields.gifId) ? fields.gifId : '' %>" required>
       </div>
       <p>You are all done! Make sure to review before you submit!</p>
       <div class="tos-wrapper">

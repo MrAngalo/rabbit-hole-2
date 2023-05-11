@@ -36,14 +36,17 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
 
     var error = (function() {
       if (parent == null)
-        return "current scene does not exist!";
+        return "Error: Current scene does not exist!";
 
       if (!parent.hasFreeChildSlot())
-        return "current scene does not have children available!";
+        return `Error: There are no more children available for parent scene id = ${parentId}!`;
 
       return null;
     })();
-    if (error) return res.redirect('/');
+    if (error) {
+      (req.session as any).myinfo = { error };
+      return res.redirect('/');
+    }
 
 
     res.render("create", { parent, csrfToken: req.csrfToken() });
@@ -82,8 +85,8 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
     console.log(parent);
 
     var error = await (async function() {
-      if (!parent.hasFreeChildSlot())
-        return `There are no more children available for parent scene id = ${parentId}!`;
+      if (!parent.hasFreeChildSlot()) /* should almost never happen, only for the very unfortunate ones */
+        return `Error: There are no more children available for parent scene id = ${parentId}!`;
       
       if (title == null || description == null || gifId == null)
         return `Error: At least one of the fields is empty!`;
@@ -105,7 +108,7 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
     if (error) {
         (req.session as any).myinfo = { error };
         (req.session as any).fields = req.body;
-        res.redirect(req.route);
+        res.redirect(`/create/${parent.id}`);
         return;
         // return res.render('create', { error, parent, fields: req.body, csrfToken: req.csrfToken() });
     }

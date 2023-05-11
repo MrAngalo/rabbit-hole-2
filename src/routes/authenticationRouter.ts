@@ -66,7 +66,7 @@ function authenticationRouter(config:{passport: PassportStatic}) {
 
         } catch (err) {
             console.log(err);
-            (req.session as any).myinfo = {error: 'Something has gone wrong, please try again!'};
+            (req.session as any).myinfo = {error: 'Error: Something has gone wrong, please try again!'};
             (req.session as any).fields = req.body;
             res.redirect('/register');
             return;

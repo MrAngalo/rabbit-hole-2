@@ -5,7 +5,7 @@ import { User } from "./User";
 // @Tree('materialized-path')
 @Entity('scenes')
 export class Scene extends BaseEntity {
-    private static MAX_CHILDREN = 5;
+    private static MAX_CHILDREN = 3;
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -50,6 +50,6 @@ export class Scene extends BaseEntity {
     rated_by: SceneRating[];
 
     hasFreeChildSlot() {
-        return this.children.length <= Scene.MAX_CHILDREN;
+        return this.children.length < Scene.MAX_CHILDREN;
     }
 }

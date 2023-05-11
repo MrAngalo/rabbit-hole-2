@@ -113,6 +113,7 @@ async function mainApp() {
 
   //sets up csrf tokens
   const csrfProtection = csrf({
+    cookie: false
     // ignoreMethods: ['POST', 'GET', 'HEAD', 'OPTIONS']
   });
 
