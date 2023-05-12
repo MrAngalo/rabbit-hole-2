@@ -125,6 +125,8 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
     Scene.addRelationToCache(scene.id, parent.id);
     config.globals.scene_count++;
 
+    (req.session as any).myinfo = { info: "Successfully created scene!" };
+
     res.redirect(`/scene/${scene.id}`);
   });
   return router;

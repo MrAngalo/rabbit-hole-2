@@ -12,6 +12,12 @@
         <div class="content">
             <header><%- include('fragments/header'); %></header>
             <main>
+                <% if (myinfo.info) { %>
+                    <div class="message info"><%= myinfo.info %></div>
+                <% } %>
+                <% if (myinfo.warn) { %>
+                    <div class="message warn"><%= myinfo.warn %></div>
+                <% } %>
                 <% if (myinfo.error) { %>
                     <div class="message error"><%= myinfo.error %></div>
                 <% } %>

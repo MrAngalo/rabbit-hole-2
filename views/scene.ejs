@@ -16,13 +16,17 @@
     <div class="choice-wrapper">
       <% for (var i = 0; i < options.length; i++) { %>
         <% if (options[i].id != -1) { %> 
-          <form action="/scene/<%= options[i].id %>" method="GET">
-            <button class="button choice" type="submit"><%= options[i].title %></button>
-          </form>
+          <a href="/scene/<%= options[i].id %>">
+            <div class="button choice">
+              <%= options[i].title %>
+            </div>
+          </a>
         <% } else { %>
-          <form action="/create/<%= scene.id %>" method="GET">
-            <button class="button choice create" type="submit"><%= options[i].title %></button>
-          </form>
+          <a href="/create/<%= scene.id %>">
+            <div class="button choice create">
+              <%= options[i].title %>
+            </div>
+          </a>
         <% } %> 
       <% } %>
     </div>
