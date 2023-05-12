@@ -4,6 +4,21 @@ html, body {
   overflow: hidden;
 }
 
+.message {
+  background: rgb(11, 149, 11);
+  padding: 10px;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.message.error {
+  background: rgb(245, 71, 71);
+}
+
+.message.warn {
+  background: rgb(162, 113, 20);
+}
+
 .content {
   background: #adc0c5;
   min-width: 650px;
@@ -60,3 +75,4 @@ a:active {
   width: 150px;
   float: right;
 }
+

@@ -4,16 +4,16 @@
         <meta charset="utf-8">
         <title>Rabbit Search</title>
         <link rel="stylesheet" href="/css/layout.css">
-        <link rel="stylesheet" href="/css/header.css">
+        <link rel="stylesheet" href="/css/fragments/header.css">
         <link rel="stylesheet" href="/css/<%= filename %>.css">
         <link rel="icon" href="/img/icons/rabbit.svg" type="image/icon type">
     </head>
     <body>
         <div class="content">
-            <header><%- include('header'); %></header>
+            <header><%- include('fragments/header'); %></header>
             <main>
                 <% if (myinfo.error) { %>
-                    <div class="error"><%= myinfo.error %></div>
+                    <div class="message error"><%= myinfo.error %></div>
                 <% } %>
                 <%- body %>
             </main>

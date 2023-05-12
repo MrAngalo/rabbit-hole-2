@@ -1,7 +1,7 @@
 import { Strategy as LocalStrategy } from 'passport-local';
 import { PassportStatic } from 'passport';
 import bcrypt2 from 'bcrypt';
-import { User } from 'src/entities/User';
+import { User } from '../entities/User';
 
 module.exports = initPassport;
 export = initPassport;
