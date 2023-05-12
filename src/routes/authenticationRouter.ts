@@ -7,12 +7,13 @@ import { checkAuthenticated, checkNotAuthenticated } from './middleware';
 import { validateRegistration } from '../utils/validator';
 import { User } from '../entities/User';
 import { Token } from '../entities/Token'
+import { DataSource } from 'typeorm';
 
 module.exports = authenticationRouter
 export = authenticationRouter;
 
 const router = express.Router();
-function authenticationRouter(config:{passport: PassportStatic}) {
+function authenticationRouter(config:{dataSource: DataSource, passport: PassportStatic}) {
     
     router.get('/login', checkNotAuthenticated, function (req, res) {
         res.render("login", {csrfToken: req.csrfToken()});
@@ -35,10 +36,7 @@ function authenticationRouter(config:{passport: PassportStatic}) {
         const email:string = req.body.email
         const rawPwd:string = req.body.password;
 
-        var error = validateRegistration(username, email, rawPwd);
-
-        // TODO: check if username / email is taken
-
+        var error = await validateRegistration(config.dataSource, username, email, rawPwd);
         if (error != null) {
             (req.session as any).myinfo = { error };
             (req.session as any).fields = req.body;
@@ -50,7 +48,8 @@ function authenticationRouter(config:{passport: PassportStatic}) {
             const hashPwd = await bcrypt.hash(rawPwd, 10);
             const user = User.create({
                 username: username,
-                email: email,
+                username_lower: username.toLowerCase(),
+                email: email.toLowerCase(),
                 password: hashPwd
             });
             await user.save();

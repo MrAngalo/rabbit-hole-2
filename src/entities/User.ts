@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, Column, CreateDateColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Entity, Column, CreateDateColumn, OneToMany, PrimaryGeneratedColumn, Generated } from "typeorm";
 import { UserRating, SceneRating } from "./Rating";
 import { Scene } from "./Scene";
 import { Token } from "./Token";
@@ -7,6 +7,9 @@ import { Token } from "./Token";
 export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Column({unique: true})
+    username_lower: string;
 
     @Column({unique: true})
     username: string;

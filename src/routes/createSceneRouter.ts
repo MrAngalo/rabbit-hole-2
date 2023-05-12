@@ -38,7 +38,7 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
       if (parent == null)
         return "Error: Current scene does not exist!";
 
-      if (!parent.hasFreeChildSlot())
+      if (!Scene.hasFreeChildSlot(parent.id))
         return `Error: There are no more children available for parent scene id = ${parentId}!`;
 
       return null;
@@ -85,7 +85,7 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
     console.log(parent);
 
     var error = await (async function() {
-      if (!parent.hasFreeChildSlot()) /* should almost never happen, only for the very unfortunate ones */
+      if (!Scene.hasFreeChildSlot(parent.id)) /* should almost never happen, only for the very unfortunate ones */
         return `Error: There are no more children available for parent scene id = ${parentId}!`;
       
       if (title == null || description == null || gifId == null)
@@ -110,7 +110,6 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
         (req.session as any).fields = req.body;
         res.redirect(`/create/${parent.id}`);
         return;
-        // return res.render('create', { error, parent, fields: req.body, csrfToken: req.csrfToken() });
     }
 
     const scene = Scene.create({
@@ -123,7 +122,7 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
     });
 
     await scene.save();
-
+    Scene.addRelationToCache(scene.id, parent.id);
     config.globals.scene_count++;
 
     res.redirect(`/scene/${scene.id}`);

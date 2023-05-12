@@ -52,6 +52,8 @@ async function mainApp() {
   // ************************************************** //
   //                      SET UP                        //
   // ************************************************** //
+
+  const globals:any = {};
   
   //connects to postgresql database
   const dataSource = new DataSource({
@@ -62,11 +64,9 @@ async function mainApp() {
     synchronize: true
   });
   await dataSource.initialize(); //establishes connection to postgresql databse
+  await Scene.createRelationsCache(dataSource);
 
-  var globals = {
-    scene_count: (await Scene.count()) -1 //removes root scene
-  }
-
+  globals.scene_count = (await Scene.count()) -1 //removes root scene
   console.log(`Total paths: ${globals.scene_count}`);
 
   // const pool = new Pool({
@@ -124,7 +124,6 @@ async function mainApp() {
   // ************************************************** //
   //                    Express App                     //
   // ************************************************** //
-  
   var app = express();
   var port = process.env.PORT || 9000;
 
@@ -158,7 +157,7 @@ async function mainApp() {
   //page routers
   app.use(homeRouter());
   app.use(guidelineRouter());
-  app.use(authenticationRouter({ passport }));
+  app.use(authenticationRouter({ dataSource, passport }));
   app.use(fetchSceneRouter({ dataSource }));
   app.use(createSceneRouter({ dataSource, globals }));
   app.use(fetchTenorRouter({ Tenor }));

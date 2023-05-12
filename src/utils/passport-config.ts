@@ -8,7 +8,7 @@ export = initPassport;
 
 async function initPassport(passport:PassportStatic, getUserByEmail:(email: string) => Promise<User | null>, getUserById:(id: number) => Promise<User | null>) {
   const authenticateUser = async (email:string, password:string, done:(err: any, user?: any, options?: any) => void) => {
-      const user = await getUserByEmail(email);
+      const user = await getUserByEmail(email.toLowerCase());
       if (user == null)
           return done(null, false, { message: 'Error: No user with that email' });
       
