@@ -67,7 +67,18 @@ async function mainApp() {
   await Scene.createRelationsCache(dataSource);
 
   globals.scene_count = (await Scene.count()) -1 //removes root scene
-  console.log(`Total paths: ${globals.scene_count}`);
+
+  const last_scene = await dataSource.getRepository(Scene)
+    .createQueryBuilder('scene')
+    .select(['scene.id AS id'])
+    .orderBy('scene.id', 'DESC')
+    .getRawOne();
+
+  
+  globals.last_id = (last_scene) ? last_scene.id : -1; //different from scene_count since it accounts for holes (deleted scenes)
+
+  console.log(`Total scenes: ${globals.scene_count}`);
+  console.log(`Higest scene id: ${globals.last_id}`);
 
   // const pool = new Pool({
   //   connectionString: process.env.DATABASE_URL,

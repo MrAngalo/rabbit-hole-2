@@ -16,21 +16,65 @@
     <div class="choice-wrapper">
       <% for (var i = 0; i < options.length; i++) { %>
         <% if (options[i].id != -1) { %> 
-          <a href="/scene/<%= options[i].id %>">
-            <div class="button choice">
-              <%= options[i].title %>
+          <div class="choice">
+            <a href="/scene/<%= options[i].id %>">
+              <div class="button">
+                <%= options[i].title %>
+              </div>
+            </a>
+            <% if (scene.children[i]) { %> 
+            <div class="child-rating-wrapper">
+              <div class="child-rating green"><%= scene.children[i].likes%></div>
+              <div class="child-rating red"><%= scene.children[i].dislikes%></div>
             </div>
-          </a>
+            <% } %>
+          </div>
         <% } else { %>
-          <a href="/create/<%= scene.id %>">
-            <div class="button choice create">
-              <%= options[i].title %>
-            </div>
-          </a>
+          <div class="choice">
+            <a href="/create/<%= scene.id %>">
+              <div class="button create">
+                <%= options[i].title %>
+              </div>
+            </a>
+          </div>
         <% } %> 
       <% } %>
     </div>
     <p>Scene ID: <%= scene.id %></p>
+    <div class="rating-container">
+      <div class="rating-option">
+        <form action="/rate/<%= scene.id %>" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="rating" value="like">
+          <button class="icon button green" type="submit">
+            <img src="/img/icons/like.svg" alt="Search">
+          </button>
+        </form>
+        <div><%= scene.likes %> (WIP)</div>
+      </div>
+      <div class="rating-option">
+        <form action="/rate/<%= scene.id %>" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="rating" value="dislike">
+          <button class="icon button red" type="submit">
+            <img src="/img/icons/dislike.svg" alt="Search">
+          </button>
+        </form>
+        <div><%= scene.dislikes %> (WIP)</div>
+      </div>
+      <div class="rating-option">
+        <form action="/rate/<%= scene.id %>" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="rating" value="report">
+          <button class="icon button yellow" type="submit">
+            <img src="/img/icons/warn.svg" alt="Search">
+          </button>
+        </form>
+        <div>
+          report (WIP)
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

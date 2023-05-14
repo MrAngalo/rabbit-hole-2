@@ -13,18 +13,18 @@
             <header><%- include('fragments/header'); %></header>
             <main>
                 <% if (myinfo.info) { %>
-                    <div class="message info"><%= myinfo.info %></div>
+                    <div class="message green"><%= myinfo.info %></div>
                 <% } %>
                 <% if (myinfo.warn) { %>
-                    <div class="message warn"><%= myinfo.warn %></div>
+                    <div class="message yellow"><%= myinfo.warn %></div>
                 <% } %>
                 <% if (myinfo.error) { %>
-                    <div class="message error"><%= myinfo.error %></div>
+                    <div class="message red"><%= myinfo.error %></div>
                 <% } %>
                 <%- body %>
             </main>
             <footer>
-                &copy; Copyright <%= moment().year(); %> Rabbit Search | Guilherme Silva
+                &copy; Copyright <%= moment().year(); %> Rabbit Search | Guilherme Silva | https://github.com/MrAngalo/rabbit-hole-2
             </footer>
         </div>
     </body>

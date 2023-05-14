@@ -10,10 +10,11 @@ function fetchSceneRouter(config:{dataSource: DataSource}) {
     const router = express.Router();
     router.get('/scene', function(req, res) {
         var id:string = req.query.id+'' || '0';
-        if (id.match(/\d+/)) {
+        if (id.match(/^\d+$/)) {
             res.redirect('/scene/'+id);
         } else {
-            res.redirect('/');
+            (req.session as any).myinfo = { warn: `Warning: scene id must be a whole number` };
+            res.redirect('/scene/0');
         }
     });
 
@@ -34,8 +35,11 @@ function fetchSceneRouter(config:{dataSource: DataSource}) {
             .where('scene.id = :id', { id })
             .getOne();
 
-        if (scene == null)
-            return res.redirect('/scene/0');
+        if (scene == null) {
+            (req.session as any).myinfo = { warn: `Warning: scene id=${id} does not exist or has been removed` };
+            res.redirect('/scene/0');
+            return;
+        }
             
         //scenes cannot have themselves as children (fix for scene 0)
         // scene.children = scene.children.filter(child => child.id != scene.id);
@@ -44,19 +48,26 @@ function fetchSceneRouter(config:{dataSource: DataSource}) {
             var ratioB = b.likes / (b.likes + b.dislikes);
             return Math.sign(ratioA - ratioB);
         });
-
-        //scenes with id equal to -1 is a flag to a create new branch
-        const default_option = {id: -1, title: "Create your action"};
         
-        var options = [ default_option, default_option, default_option];
-        var length = Math.min(options.length, scene.children.length)
-        for (var i = 0; i < length; i++) {
+        //the content of the buttons of each scene
+        var options = [];
+        
+        var i = 0;
+        var length = Math.min(scene.children.length, Scene.getMaxChildren())
+        while(i < length) {
             var child = scene.children[i];
-            options[i] = {id: child.id, title: child.title};
+            options.push({id: child.id, title: child.title});
+            i++;
         }
-        
-        //only add return option if scene is not root
-        if (scene.parent) options.push({id: scene.parent.id, title: "Go Back!"});
+        while (i < Scene.getMaxChildren()) {
+            //scenes with id equal to -1 is a flag to a create new branch
+            options.push({id: -1, title: "Create your action"})
+            i++;
+        }
+        if (scene.parent) {
+            //only add return option if scene is not root (should only be scene id=0)
+            options.push({id: scene.parent.id, title: "Go Back!"});
+        }
 
         res.render("scene", { scene, options, csrfToken: req.csrfToken()});
     });

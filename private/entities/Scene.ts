@@ -84,6 +84,10 @@ export class Scene extends BaseEntity {
         return chain;
     }
 
+    static getMaxChildren() : number {
+        return Scene.maxChildren;
+    }
+
     static hasFreeChildSlot(id: number) : boolean {
         return Scene.relations[id].children.length < Scene.maxChildren;
     }
