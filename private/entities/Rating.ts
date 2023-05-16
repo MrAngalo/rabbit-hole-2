@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Scene } from "./Scene";
 import { User } from "./User";
 
@@ -13,6 +13,9 @@ export abstract class Rating extends BaseEntity {
 
     @Column({type: "enum", enum: RatingType})
     type: number;
+
+    @CreateDateColumn()
+    created: Date;
 }
 
 @Entity('user_rating')

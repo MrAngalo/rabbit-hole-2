@@ -1,8 +1,8 @@
-import { BaseEntity, Column, CreateDateColumn, DataSource, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, DataSource, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from "typeorm";
 import { SceneRating } from "./Rating";
 import { User } from "./User";
+import { Badge } from "./Badges";
 
-// @Tree('materialized-path')
 @Entity('scenes')
 export class Scene extends BaseEntity {
     private static maxChildren = 3;
@@ -13,21 +13,21 @@ export class Scene extends BaseEntity {
 
     @ManyToOne(() => Scene, scene => scene.children)
     @JoinColumn()
-    // @Column({ select: false })
-    // @TreeParent()
     parent: Scene;
 
     @OneToMany(() => Scene, scene => scene.parent)
-    // @TreeChildren()
     children: Scene[];
 
-    @Column()
-    creator_name: string;
+    @ManyToMany(() => Badge, badge => badge.scenes, { nullable: true })
+    @JoinTable({name: "scene_badge_jointable"})
+    badges: Badge[];
 
     @ManyToOne(() => User, user => user.scenes)
     @JoinColumn()
-    // @Column({ select: false })
     creator: User;
+
+    @Column()
+    creator_name: string;
 
     @Column()
     title: string;

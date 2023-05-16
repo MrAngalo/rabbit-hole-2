@@ -18,8 +18,9 @@ import csrf from 'csurf';
 import { configLocals, handleErrors } from './routes/middleware';
 import { Scene } from './entities/Scene';
 import { User } from './entities/User';
-import { SceneRating, UserRating } from './entities/Rating';
 import { Token } from './entities/Token';
+import { Badge } from './entities/Badges'
+import { SceneRating, UserRating } from './entities/Rating';
 import { initTenor } from './utils/tenor-utils';
 import fetchTenorRouter from './routes/fetchTenorRouter';
 
@@ -60,7 +61,7 @@ async function mainApp() {
     type: 'postgres',
     url: process.env.DATABASE_URL,
     //ssl: { rejectUnauthorized: false },
-    entities: [ Scene, User, Token, UserRating, SceneRating ],
+    entities: [ Scene, User, Token, Badge, UserRating, SceneRating ],
     synchronize: true
   });
   await dataSource.initialize(); //establishes connection to postgresql databse
