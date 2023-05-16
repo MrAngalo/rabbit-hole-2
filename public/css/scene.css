@@ -69,3 +69,7 @@
   margin-right: 10px;
 }
 
+.description-wrapper .description .rating-container .rating-option button img {
+  width: auto;
+}
+
