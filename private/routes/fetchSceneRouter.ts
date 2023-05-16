@@ -24,13 +24,15 @@ function fetchSceneRouter(config:{dataSource: DataSource}) {
             .createQueryBuilder('scene')
             .leftJoinAndSelect('scene.parent', 'parent')
             .leftJoinAndSelect('scene.children', 'children')
+            .leftJoinAndSelect('scene.badges', 'badges')
             .select([
                 'scene',
                 'parent.id',
                 'children.id',
                 'children.title',
                 'children.likes',
-                'children.dislikes'
+                'children.dislikes',
+                'badges'
             ])
             .where('scene.id = :id', { id })
             .getOne();

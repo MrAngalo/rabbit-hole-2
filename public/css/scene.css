@@ -1,7 +1,43 @@
 .title {
   padding: 10px;
 }
-
+.title .heading {
+  width: fit-content;
+  position: relative;
+}
+.title .heading .badge-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 100%;
+  display: flex;
+  margin-left:15px;
+}
+.title .heading .badge-wrapper .badge {
+  position: relative;
+  margin-right: 5px;
+  cursor: auto;
+}
+.title .heading .badge-wrapper .badge .badge-hint {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 200px;
+  margin-top: 5px;
+  margin-left: -10px;
+  padding: 10px;
+  border-radius: 7px;
+  background: #8795a9;
+  opacity: 0;
+  transition: 0.25s;
+}
+.title .heading .badge-wrapper .badge .icon:hover ~ .badge-hint {
+  opacity: 1;
+}
+.title .heading .badge-wrapper .badge .badge-hint .badge-name {
+  margin-top: 0;
+  margin-bottom:10px;
+  width: max-content;
+}
 .description-wrapper {
   overflow: auto;
   margin-bottom: 50px;
