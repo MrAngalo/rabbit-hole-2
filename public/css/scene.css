@@ -12,32 +12,6 @@
   display: flex;
   margin-left:15px;
 }
-.title .heading .badge-wrapper .badge {
-  position: relative;
-  margin-right: 5px;
-  cursor: auto;
-}
-.title .heading .badge-wrapper .badge .badge-hint {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  min-width: 200px;
-  margin-top: 5px;
-  margin-left: -10px;
-  padding: 10px;
-  border-radius: 7px;
-  background: #8795a9;
-  opacity: 0;
-  transition: 0.25s;
-}
-.title .heading .badge-wrapper .badge .icon:hover ~ .badge-hint {
-  opacity: 1;
-}
-.title .heading .badge-wrapper .badge .badge-hint .badge-name {
-  margin-top: 0;
-  margin-bottom:10px;
-  width: max-content;
-}
 .description-wrapper {
   overflow: auto;
   margin-bottom: 50px;
@@ -82,18 +56,25 @@
 .description-wrapper .description .choice-wrapper .choice .create {
   background: #9179e6;
 }
-.description-wrapper .description .choice-wrapper .child-rating-wrapper {
+.description-wrapper .description .choice-wrapper .choice .child-attributes {
   position: absolute;
+  height: 30px;
   top: 0;
   left: 100%;
   padding-top: 10px;
   padding-left: 20px;
+  display: flex;
+}
+.description-wrapper .description .choice-wrapper .choice .child-attributes .child-rating-wrapper {
   display:flex;
 }
-.description-wrapper .description .choice-wrapper .child-rating-wrapper .child-rating {
+.description-wrapper .description .choice-wrapper .choice .child-attributes .child-rating-wrapper .child-rating {
   padding: 5px 15px;
   margin-right: 5px;
   border-radius: 5px;
+}
+.description-wrapper .description .choice-wrapper .choice .child-attributes .child-badge-wrapper{
+  display: flex;
 }
 .description-wrapper .description .rating-container .rating-option {
   width: fit-content;
@@ -104,8 +85,41 @@
   height: 40px;
   margin-right: 10px;
 }
-
 .description-wrapper .description .rating-container .rating-option button img {
   width: auto;
+}
+.badge {
+  position: relative;
+  margin-right: 5px;
+  cursor: auto;
+  font: initial;
+}
+.badge .badge-hint {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 5px;
+  margin-left: -10px;
+  border-radius: 7px;
+  background: #8795a9;
+  opacity: 0;
+  transition: 0.25s;
+  overflow: hidden;
+  width: 0;
+  height: 0;
+  padding: 0;
+  z-index: 1;
+}
+.badge .icon:hover ~ .badge-hint {
+  min-width: 200px;
+  width: auto;
+  height: auto;
+  padding: 10px;
+  opacity: 1;
+}
+.badge .badge-hint .badge-name {
+  margin-top: 0;
+  margin-bottom:10px;
+  width: max-content;
 }
 

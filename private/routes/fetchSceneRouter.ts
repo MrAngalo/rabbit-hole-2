@@ -22,16 +22,16 @@ function fetchSceneRouter(config:{dataSource: DataSource}) {
         const id:number = parseInt(req.params.id);
         const scene = await config.dataSource.getRepository(Scene)
             .createQueryBuilder('scene')
-            .leftJoinAndSelect('scene.parent', 'parent')
-            .leftJoinAndSelect('scene.children', 'children')
             .leftJoinAndSelect('scene.badges', 'badges')
+            .leftJoinAndSelect('scene.children', 'children')
+            .leftJoinAndSelect('children.badges', 'children_badges')
             .select([
                 'scene',
-                'parent.id',
                 'children.id',
                 'children.title',
                 'children.likes',
                 'children.dislikes',
+                'children_badges',
                 'badges'
             ])
             .where('scene.id = :id', { id })
@@ -45,7 +45,11 @@ function fetchSceneRouter(config:{dataSource: DataSource}) {
             
         //scenes cannot have themselves as children (fix for scene 0)
         // scene.children = scene.children.filter(child => child.id != scene.id);
+
         scene.children.sort((a, b) => {
+            if (a.badges.length > b.badges.length) return -1;
+            if (a.badges.length < b.badges.length) return 1;
+
             var ratioA = a.likes / (a.likes + a.dislikes);
             var ratioB = b.likes / (b.likes + b.dislikes);
             return Math.sign(ratioA - ratioB);
@@ -66,9 +70,11 @@ function fetchSceneRouter(config:{dataSource: DataSource}) {
             options.push({id: -1, title: "Create your action"})
             i++;
         }
-        if (scene.parent) {
+        
+        var parentId = Scene.getParentId(scene.id);
+        if (parentId != null) {
             //only add return option if scene is not root (should only be scene id=0)
-            options.push({id: scene.parent.id, title: "Go Back!"});
+            options.push({id: parentId, title: "Go Back!"});
         }
 
         res.render("scene", { scene, options, csrfToken: req.csrfToken()});

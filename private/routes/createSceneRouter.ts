@@ -23,13 +23,11 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
     const parentId:number = parseInt(req.params.id);
     const parent = await config.dataSource.getRepository(Scene)
       .createQueryBuilder('parent')
-      .leftJoinAndSelect('parent.children', 'children')
       .select([
           'parent.id',
           'parent.title',
           'parent.description',
           'parent.gifId',
-          'children.id'
       ])
       .where('parent.id = :parentId', { parentId })
       .getOne();
@@ -67,13 +65,11 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
     const user = req.user as User;
     const parent = await config.dataSource.getRepository(Scene)
     .createQueryBuilder('parent')
-    .leftJoinAndSelect('parent.children', 'children')
     .select([
         'parent.id',
         'parent.title',
         'parent.description',
         'parent.gifId',
-        'children.id'
     ])
     .where('parent.id = :parentId', { parentId })
     .getOne();

@@ -6,7 +6,7 @@ import { Badge } from "./Badges";
 @Entity('scenes')
 export class Scene extends BaseEntity {
     private static maxChildren = 3;
-    private static relations: { [key: number]: { parent: number, children: number[]}};
+    private static relations: { [key: number]: { parent: number | null, children: number[]}};
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -78,10 +78,18 @@ export class Scene extends BaseEntity {
         const chain:number[] = [];
         if (!Scene.relations[id]) return chain;
         while (Scene.relations[id].parent != null) {
-            chain.push(Scene.relations[id].parent)
-            id = Scene.relations[id].parent;
+            chain.push(Scene.relations[id].parent!)
+            id = Scene.relations[id].parent!;
         }
         return chain;
+    }
+
+    static getParentId(id:number) : number | null {
+        return Scene.relations[id]?.parent;
+    }
+
+    static getChildrenId(id:number) : number[] {
+        return Scene.relations[id]?.children || [];
     }
 
     static getMaxChildren() : number {
