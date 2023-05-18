@@ -21,6 +21,12 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
 
   router.get('/create/:id(\\d+)', checkAuthenticated, async function (req, res) {
     const parentId:number = parseInt(req.params.id);
+
+    if (!Scene.exists(parentId)){ 
+      (req.session as any).myinfo = { warn: `Warning: Scene id=${parentId} does not exist or has been removed` };
+      return res.redirect('/');
+    }
+
     const parent = await config.dataSource.getRepository(Scene)
       .createQueryBuilder('parent')
       .select([
@@ -30,36 +36,33 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
           'parent.gifId',
       ])
       .where('parent.id = :parentId', { parentId })
-      .getOne();
+      .getOne() as Scene; //always exists
 
-    var error = (function() {
-      if (parent == null)
-        return "Error: Current scene does not exist!";
-
-      if (!Scene.hasFreeChildSlot(parent.id))
-        return `Error: There are no more children available for parent scene id = ${parentId}!`;
-
-      return null;
-    })();
-    if (error) {
-      (req.session as any).myinfo = { error };
+    if (!Scene.hasFreeChildSlot(parentId)) {
+      (req.session as any).myinfo = { error: `Error: There are no more children available for parent scene id = ${parentId}!` };
       return res.redirect('/');
     }
-
 
     res.render("create", { parent, csrfToken: req.csrfToken() });
   });
 
   router.post('/create/:id(\\d+)', checkAuthenticated, async function (req, res) {
     const parentId:number = parseInt(req.params.id);
+
+    if (!Scene.exists(parentId)){ 
+      (req.session as any).myinfo = { warn: `Warning: Scene id=${parentId} does not exist or has been removed` };
+      return res.redirect('/');
+    }
     
     //remove double spaces in string
     const title:string|null = req.body.title?.trim()
       .replace(/\s{2,}/g, ' ');
+
     const description:string|null = req.body.description?.trim()
       .replace(/^[ ]+|[ ]+$/mg, '')
       .replace(/[ ]{2,}/g, ' ')
       .replace(/[\r\n\t\f\v]+/g, '\\n');
+      
     const gifId:number|null = req.body.gifId
     
     const user = req.user as User;
@@ -72,13 +75,7 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
         'parent.gifId',
     ])
     .where('parent.id = :parentId', { parentId })
-    .getOne();
-
-    if (parent == null)
-      return res.redirect('/');
-
-    console.log("--------------");
-    console.log(parent);
+    .getOne() as Scene; //always exists
 
     var error = await (async function() {
       if (!Scene.hasFreeChildSlot(parent.id)) /* should almost never happen, only for the very unfortunate ones */

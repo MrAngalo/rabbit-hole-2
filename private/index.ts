@@ -12,6 +12,8 @@ import initPassport from './utils/passport-config';
 import createSceneRouter from './routes/createSceneRouter';
 import authenticationRouter from './routes/authenticationRouter';
 import fetchSceneRouter from './routes/fetchSceneRouter';
+import fetchTenorRouter from './routes/fetchTenorRouter';
+import rateSceneRouter from './routes/rateSceneRouter';
 import guidelineRouter from './routes/guidelinesRouter';
 import homeRouter from './routes/homeRouter';
 import csrf from 'csurf';
@@ -22,7 +24,6 @@ import { Token } from './entities/Token';
 import { Badge } from './entities/Badges'
 import { SceneRating, UserRating } from './entities/Rating';
 import { initTenor } from './utils/tenor-utils';
-import fetchTenorRouter from './routes/fetchTenorRouter';
 
 async function mainApp() {
   
@@ -74,7 +75,6 @@ async function mainApp() {
     .select(['scene.id AS id'])
     .orderBy('scene.id', 'DESC')
     .getRawOne();
-
   
   globals.last_id = (last_scene) ? last_scene.id : -1; //different from scene_count since it accounts for holes (deleted scenes)
 
@@ -171,11 +171,12 @@ async function mainApp() {
   app.use(guidelineRouter());
   app.use(authenticationRouter({ dataSource, passport }));
   app.use(fetchSceneRouter({ dataSource }));
+  app.use(rateSceneRouter({ dataSource }))
   app.use(createSceneRouter({ dataSource, globals }));
   app.use(fetchTenorRouter({ Tenor }));
 
   //handle errors
-  app.use(handleErrors)
+  app.use(handleErrors);
 
   //clean up on exit
   process.on('exit', function(_code) {

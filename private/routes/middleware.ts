@@ -31,12 +31,16 @@ function configLocals(config:{globals:any}) {
 function checkAuthenticated(req:Request, res:Response, next: NextFunction) {
     if (req.isAuthenticated())
         return next();
+
+    (req.session as any).myinfo = { warn: 'Warning: You must be logged in to do this!' };
     res.redirect('/login');
 }
 
 function checkNotAuthenticated(req:Request, res:Response, next: NextFunction) {
     if (!req.isAuthenticated())
         return next();
+        
+    (req.session as any).myinfo = { warn: 'Warning: You are no longer logged in!' };
     res.redirect('/');
 }
 

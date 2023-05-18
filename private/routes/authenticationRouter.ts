@@ -1,5 +1,4 @@
 import express, { RequestHandler } from 'express';
-import { ClientBase } from 'pg';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import { PassportStatic } from 'passport';
@@ -33,7 +32,7 @@ function authenticationRouter(config:{dataSource: DataSource, passport: Passport
 
     router.post('/register', checkNotAuthenticated, async function (req, res) {
         const username:string = req.body.username;
-        const email:string = req.body.email
+        const email:string = req.body.email;
         const rawPwd:string = req.body.password;
 
         var error = await validateRegistration(config.dataSource, username, email, rawPwd);
@@ -61,6 +60,7 @@ function authenticationRouter(config:{dataSource: DataSource, passport: Passport
             // })
             // await token.save();
             
+            (req.session as any).myinfo = { info: 'Successfully created an account!' };
             res.redirect('/login');
 
         } catch (err) {
@@ -81,6 +81,7 @@ function authenticationRouter(config:{dataSource: DataSource, passport: Passport
     router.post('/logout', checkAuthenticated, function (req, res, next) {
         req.logOut(function(err) {
             if (err) return next(err);
+            (req.session as any).myinfo = { info: 'Successfully logged out!' };
             res.redirect('/login');
         });
     });

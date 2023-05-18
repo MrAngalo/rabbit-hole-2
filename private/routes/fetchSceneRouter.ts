@@ -20,6 +20,13 @@ function fetchSceneRouter(config:{dataSource: DataSource}) {
 
     router.get('/scene/:id(\\d+)', async function (req, res) {
         const id:number = parseInt(req.params.id);
+
+        if (!Scene.exists(id)) {
+            (req.session as any).myinfo = { warn: `Warning: scene id=${id} does not exist or has been removed` };
+            res.redirect('/');
+            return;
+        }
+
         const scene = await config.dataSource.getRepository(Scene)
             .createQueryBuilder('scene')
             .leftJoinAndSelect('scene.badges', 'badges')
@@ -35,24 +42,18 @@ function fetchSceneRouter(config:{dataSource: DataSource}) {
                 'badges'
             ])
             .where('scene.id = :id', { id })
-            .getOne();
-
-        if (scene == null) {
-            (req.session as any).myinfo = { warn: `Warning: scene id=${id} does not exist or has been removed` };
-            res.redirect('/scene/0');
-            return;
-        }
+            .getOne() as Scene; //always exists
             
         //scenes cannot have themselves as children (fix for scene 0)
         // scene.children = scene.children.filter(child => child.id != scene.id);
 
         scene.children.sort((a, b) => {
-            if (a.badges.length > b.badges.length) return -1;
-            if (a.badges.length < b.badges.length) return 1;
+            if (b.badges.length > a.badges.length) return 1;
+            if (b.badges.length < a.badges.length) return -1;
 
-            var ratioA = a.likes / (a.likes + a.dislikes);
-            var ratioB = b.likes / (b.likes + b.dislikes);
-            return Math.sign(ratioA - ratioB);
+            var ratioB = b.likes / (b.likes + b.dislikes +1); //+1 avoids division by 0
+            var ratioA = a.likes / (a.likes + a.dislikes +1); //+1 avoids division by 0
+            return Math.sign(ratioB - ratioA);
         });
         
         //the content of the buttons of each scene

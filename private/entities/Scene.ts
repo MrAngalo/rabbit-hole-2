@@ -74,8 +74,12 @@ export class Scene extends BaseEntity {
         return true;
     }
 
-    static getParentIdChainToRoot(id:number) : number[] {
-        const chain:number[] = [];
+    static exists(id:number) : boolean {
+        return Scene.relations[id] != null;
+    }
+
+    static getIdChainToRoot(id:number) : number[] {
+        const chain:number[] = [id];
         if (!Scene.relations[id]) return chain;
         while (Scene.relations[id].parent != null) {
             chain.push(Scene.relations[id].parent!)
@@ -91,6 +95,7 @@ export class Scene extends BaseEntity {
     static getChildrenId(id:number) : number[] {
         return Scene.relations[id]?.children || [];
     }
+
 
     static getMaxChildren() : number {
         return Scene.maxChildren;

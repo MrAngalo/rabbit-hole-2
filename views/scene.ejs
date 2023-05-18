@@ -41,7 +41,7 @@
             <div class="child-attributes">
               <div class="child-rating-wrapper">
                 <div class="child-rating green"><%= scene.children[i].likes%></div>
-                <div class="child-rating red"><%= scene.children[i].dislikes%></div>
+                <div class="child-rating red"><%= -scene.children[i].dislikes%></div>
               </div>
               <div class="child-badge-wrapper">
                 <% for (var j = 0; j < scene.children[i].badges.length; j++) { %>
@@ -75,22 +75,22 @@
       <div class="rating-option">
         <form action="/rate/<%= scene.id %>" method="POST">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <input type="hidden" name="rating" value="like">
+          <input type="hidden" name="rating" value="positive">
           <button class="icon button green" type="submit">
             <img src="/img/icons/like.svg" alt="Search">
           </button>
         </form>
-        <div><%= scene.likes %> (WIP)</div>
+        <div><%= scene.likes %></div>
       </div>
       <div class="rating-option">
         <form action="/rate/<%= scene.id %>" method="POST">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <input type="hidden" name="rating" value="dislike">
+          <input type="hidden" name="rating" value="negative">
           <button class="icon button red" type="submit">
             <img src="/img/icons/dislike.svg" alt="Search">
           </button>
         </form>
-        <div><%= scene.dislikes %> (WIP)</div>
+        <div><%= -scene.dislikes %></div>
       </div>
       <div class="rating-option">
         <form action="/rate/<%= scene.id %>" method="POST">
@@ -100,9 +100,7 @@
             <img src="/img/icons/warn.svg" alt="Search">
           </button>
         </form>
-        <div>
-          report (WIP)
-        </div>
+        <div>report (WIP)</div>
       </div>
     </div>
   </div>
