@@ -29,7 +29,7 @@ function rateSceneRouter(config:{dataSource: DataSource}) {
         }
 
         //beginning of the day
-        var today = new Date();
+        let today = new Date();
         today.setHours(0, 0, 0, 0);
 
         // [ { created, owner, scene }, ... ]
@@ -69,9 +69,9 @@ function rateSceneRouter(config:{dataSource: DataSource}) {
         if (remaining_ratings <= 0) {
             const tomorrow = new Date();
             tomorrow.setHours(23, 59, 59, 999);
-            var sec = Math.floor((tomorrow.getTime() - now.getTime()) / 1000);
-            var min = Math.floor(sec / 60);
-            var hrs = Math.floor(min / 60);
+            let sec = Math.floor((tomorrow.getTime() - now.getTime()) / 1000);
+            let min = Math.floor(sec / 60);
+            let hrs = Math.floor(min / 60);
             sec -= min*60;
             min -= hrs*60;
             (req.session as any).myinfo = { warn: `Warning: You can only vote ${max_ratings} times per day. Time remaining: ${hrs}h:${min}m:${sec}s!` };

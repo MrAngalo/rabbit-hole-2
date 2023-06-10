@@ -5,9 +5,12 @@ import { Badge } from "./Badges";
 
 @Entity('scenes')
 export class Scene extends BaseEntity {
-    private static maxChildren = 3;
+    private static max_children = 3;
+    
     private static relations: { [key: number]: { parent: number | null, children: number[]}};
-
+    public static scene_count = -1;
+    public static last_id = -1;
+    
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -60,9 +63,12 @@ export class Scene extends BaseEntity {
             ])
             .getRawMany();
             
-        Scene.relations = {}
+        Scene.relations = {};
         relationsQuery.forEach(r => Scene.relations[r.child] = { parent: r.parent, children: []});
         relationsQuery.forEach(r => Scene.relations[r.parent]?.children.push(r.child)); //question mark to avoid relations[null]
+        
+        Scene.scene_count = relationsQuery.length -1; //removes root whose parent is null
+        relationsQuery.forEach(r => { if (Scene.last_id < r.child) Scene.last_id = r.child; });
     }
 
     static addRelationToCache(child: number, parent: number) : boolean {
@@ -70,7 +76,12 @@ export class Scene extends BaseEntity {
         if (!Scene.relations[parent]) return false; //escape if parent doesn't exist
 
         Scene.relations[child] = { parent: parent, children: []};
-        Scene.relations[parent].children.push(child);
+        Scene.relations[parent].children.push(child); //always exists
+
+        Scene.scene_count++;
+        if (Scene.last_id < child)
+            Scene.last_id = child;
+
         return true;
     }
 
@@ -98,10 +109,10 @@ export class Scene extends BaseEntity {
 
 
     static getMaxChildren() : number {
-        return Scene.maxChildren;
+        return Scene.max_children;
     }
 
     static hasFreeChildSlot(id: number) : boolean {
-        return Scene.relations[id].children.length < Scene.maxChildren;
+        return Scene.relations[id].children.length < Scene.max_children;
     }
 }

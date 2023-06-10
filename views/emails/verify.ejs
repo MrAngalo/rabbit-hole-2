@@ -1,1 +1,30 @@
-Hello World
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title><%= locals.subject %></title>
+</head>
+<body>
+  <table cellpadding="0" cellspacing="0" width="600" style="margin: 0 auto;">
+    <tr>
+      <td style="padding: 40px 0; text-align: center; background-color: #f0f0f0;">
+        <h1>Verify Your Email</h1>
+      </td>
+    </tr>
+    <tr>
+      <td class="secondary" style="padding: 40px 30px; background-color: #ffffff;">
+        <p>Dear User,</p>
+        <p>Thank you for signing up. To complete your registration, please use the verification code below:</p>
+        <h2 style="text-align: center;"><%= locals.token.match(/.{1,4}/g).join(' ') %></h2>
+        <p style="text-align: center;"><em>Please note that this code is valid for 30 minutes.</em></p>
+        <p style="text-align: center;">
+          <a href="<%= locals.url %>" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;">Verify Email</a>
+        </p>
+        <p>If you didn't sign up for an account on our website, please ignore this email.</p>
+        <p>Thank you,</p>
+        <p>Gui Silva</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

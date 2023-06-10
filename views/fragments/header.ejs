@@ -17,10 +17,10 @@
                     <label for="id">Scene ID #</label>
                     <input type="number" id="id" name="id" min="0"
                         value="<%= (locals.scene) ? locals.scene.id : 0 %>"
-                        max="<%= locals.globals.last_id || 0 %>"
+                        max="<%= locals.static.last_id || 0 %>"
                         oninput="value=Math.min(Math.max(value, 0),
-                        parseInt('<%= locals.globals.last_id || 0 %>'));">
-                    <div class="hint">Highest ID is <%= locals.globals.last_id || 0 %>!</div>
+                        parseInt('<%= locals.static.last_id || 0 %>'));">
+                    <div class="hint">Highest ID is <%= locals.static.last_id || 0 %>!</div>
                 </div>
                 <div>
                     <button class="icon button" type="submit">

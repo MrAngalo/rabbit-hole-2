@@ -9,7 +9,7 @@ function fetchSceneRouter(config:{dataSource: DataSource}) {
 
     const router = express.Router();
     router.get('/scene', function(req, res) {
-        var id:string = req.query.id+'' || '0';
+        let id:string = (req.query.id != undefined) ? req.query.id+'' : '0';
         if (id.match(/^\d+$/)) {
             res.redirect('/scene/'+id);
         } else {
@@ -51,18 +51,18 @@ function fetchSceneRouter(config:{dataSource: DataSource}) {
             if (b.badges.length > a.badges.length) return 1;
             if (b.badges.length < a.badges.length) return -1;
 
-            var ratioB = b.likes / (b.likes + b.dislikes +1); //+1 avoids division by 0
-            var ratioA = a.likes / (a.likes + a.dislikes +1); //+1 avoids division by 0
+            let ratioB = b.likes / (b.likes + b.dislikes +1); //+1 avoids division by 0
+            let ratioA = a.likes / (a.likes + a.dislikes +1); //+1 avoids division by 0
             return Math.sign(ratioB - ratioA);
         });
         
         //the content of the buttons of each scene
-        var options = [];
+        let options = [];
         
-        var i = 0;
-        var length = Math.min(scene.children.length, Scene.getMaxChildren())
+        let i = 0;
+        let length = Math.min(scene.children.length, Scene.getMaxChildren())
         while(i < length) {
-            var child = scene.children[i];
+            let child = scene.children[i];
             options.push({id: child.id, title: child.title});
             i++;
         }
@@ -72,7 +72,7 @@ function fetchSceneRouter(config:{dataSource: DataSource}) {
             i++;
         }
         
-        var parentId = Scene.getParentId(scene.id);
+        let parentId = Scene.getParentId(scene.id);
         if (parentId != null) {
             //only add return option if scene is not root (should only be scene id=0)
             options.push({id: parentId, title: "Go Back!"});

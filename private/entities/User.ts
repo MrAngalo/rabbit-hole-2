@@ -1,7 +1,7 @@
 import { BaseEntity, Entity, Column, CreateDateColumn, OneToMany, PrimaryGeneratedColumn, Generated } from "typeorm";
 import { UserRating, SceneRating } from "./Rating";
 import { Scene } from "./Scene";
-import { Token } from "./Token";
+import { Token, TokenType } from "./Token";
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -49,4 +49,27 @@ export class User extends BaseEntity {
 
     @OneToMany(() => Token, token => token.owner)
     tokens: Token[];
+
+    public getToken(type: TokenType) : Token | null {
+        if (!this.tokens) return null;
+        for (let i = 0; i < this.tokens.length; i++) {
+            if (this.tokens[i].type == type) {
+                return this.tokens[i];
+            }
+        }
+        return null;
+    }
+
+    public async updateToken(token: Token) : Promise<void> {
+        let oldToken = this.getToken(token.type);
+        if (oldToken != null) {
+            await this.removeToken(oldToken);
+        }
+        token.owner = this;
+        await token.save();
+    }
+
+    public async removeToken(token: Token) : Promise<void> {
+        await token.remove();
+    }
 }

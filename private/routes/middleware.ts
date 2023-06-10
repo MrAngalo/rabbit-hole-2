@@ -1,28 +1,37 @@
 import { NextFunction, Request, Response } from 'express';
 import moment from 'moment';
+import { Scene } from '../entities/Scene';
 
-var middlewares = { configLocals, checkAuthenticated, checkNotAuthenticated, handleErrors};
+let middlewares = { configLocals, checkAuthenticated, checkNotAuthenticated, handleErrors};
 module.exports = middlewares;
 export = middlewares;
 
-function configLocals(config:{globals:any}) {
+type RenderFunction = (view: string, options?: object, fn?: (err: Error, html: string) => void) => void;
+
+function configLocals() {
     return function (req:Request, res:Response, next: NextFunction) {
 
-        (res as any).E6M5JTT6a8gaNZ = res.render;
+        //injecting
+        let old_render = res.render;
         
-        res.render = function (view: string, options?: object, fn?: (err: Error, html: string) => void) {
+        res.render = function (view, options?, fn?) {
             res.locals.filename = view.split('\\').pop()?.split('/').pop();
             res.locals.user = req.user;
             res.locals.moment = moment;
-            res.locals.globals = config.globals || {};
             res.locals.myinfo = (req.session as any).myinfo || req.flash();
             res.locals.fields = (req.session as any).fields || {};
+
+            res.locals.static = {
+                scene_count: Scene.scene_count,
+                last_id: Scene.last_id,
+            };
 
             (req.session as any).myinfo = null;
             (req.session as any).fields = null;
 
-            (res as any).E6M5JTT6a8gaNZ(view, options, fn)
-        }
+            old_render(view, options, fn);
+
+        } as RenderFunction;
 
         next();
     }

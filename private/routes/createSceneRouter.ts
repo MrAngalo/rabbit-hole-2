@@ -1,7 +1,7 @@
 import express from 'express';
 import { User } from '../entities/User';
 import { Scene } from '../entities/Scene';
-import { tenorIdsExist } from '../utils/tenor-utils';
+import { tenorIdsExist } from '../config/tenor-utils';
 import { checkAuthenticated } from './middleware';
 import { DataSource } from 'typeorm';
 
@@ -9,10 +9,10 @@ module.exports = createSceneRouter
 export = createSceneRouter;
 
 const router = express.Router();
-function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
+function createSceneRouter(config:{dataSource: DataSource}) {
 
   router.get('/create', function(req, res) {
-    var id:string = req.query.id+'' || '0';
+    let id:string = (req.query.id != undefined) ? req.query.id+'' : '0';
     if (!id.match(/\d+/))
         return res.redirect('/');
 
@@ -55,15 +55,15 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
     }
     
     //remove double spaces in string
-    const title:string|null = req.body.title?.trim()
+    const title:string|undefined = req.body.title?.trim()
       .replace(/\s{2,}/g, ' ');
 
-    const description:string|null = req.body.description?.trim()
+    const description:string|undefined = req.body.description?.trim()
       .replace(/^[ ]+|[ ]+$/mg, '')
       .replace(/[ ]{2,}/g, ' ')
       .replace(/[\r\n\t\f\v]+/g, '\\n');
       
-    const gifId:number|null = req.body.gifId
+    const gifId:number|undefined = req.body.gifId
     
     const user = req.user as User;
     const parent = await config.dataSource.getRepository(Scene)
@@ -77,11 +77,11 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
     .where('parent.id = :parentId', { parentId })
     .getOne() as Scene; //always exists
 
-    var error = await (async function() {
+    let error = await (async function() {
       if (!Scene.hasFreeChildSlot(parent.id)) /* should almost never happen, only for the very unfortunate ones */
         return `Error: There are no more children available for parent scene id = ${parentId}!`;
       
-      if (title == null || description == null || gifId == null)
+      if (title == undefined || description == undefined || gifId == undefined)
         return `Error: At least one of the fields is empty!`;
       
       if (title.length < 5 || title.length > 40)
@@ -116,7 +116,6 @@ function createSceneRouter(config:{dataSource: DataSource, globals:any}) {
 
     await scene.save();
     Scene.addRelationToCache(scene.id, parent.id);
-    config.globals.scene_count++;
 
     (req.session as any).myinfo = { info: "Successfully created scene!" };
 

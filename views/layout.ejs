@@ -13,13 +13,13 @@
             <header><%- include('fragments/header'); %></header>
             <main>
                 <% if (myinfo.info) { %>
-                    <div class="message green"><%= myinfo.info %></div>
+                    <div class="message green"><%- myinfo.info %></div>
                 <% } %>
                 <% if (myinfo.warn) { %>
-                    <div class="message yellow"><%= myinfo.warn %></div>
+                    <div class="message yellow"><%- myinfo.warn %></div>
                 <% } %>
                 <% if (myinfo.error) { %>
-                    <div class="message red"><%= myinfo.error %></div>
+                    <div class="message red"><%- myinfo.error %></div>
                 <% } %>
                 <%- body %>
             </main>

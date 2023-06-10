@@ -1,9 +1,12 @@
 <h1>Login</h1>
 <form action="/login" method="POST">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
+    <% if (locals.token) { %>
+    <input type="hidden" name="token" value="<%= locals.token %>">
+    <% } %>
     <div>
         <label for="email">Email</label>
-        <input type="email" id="email" name="email" value="<%= (fields && fields.email) ? fields.email : '' %>" required>
+        <input type="email" id="email" name="email" value="<%= (locals.fields && locals.fields.email) ? locals.fields.email : '' %>" required>
     </div>
     <div>
         <label for="password">Password</label>
