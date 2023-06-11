@@ -4,8 +4,8 @@
     <div class="badge-wrapper">
       <% for (var i = 0; i < scene.badges.length; i++) { %>
         <div class="badge">
-          <div class="icon" style="background-color: <%= scene.badges[i].icon_color %>">
-            <img src="/img/icons/badges/<%= scene.badges[i].icon_path %>" alt="Search">
+          <div class="icon" style="background-color: <%= scene.badges[i].bg_color %>">
+            <img src="<%= scene.badges[i].data_uri %>" alt="Search">
           </div>
           <div class="badge-hint">
             <h3 class="badge-name">Badge: <%= scene.badges[i].name %></h3>

@@ -11,13 +11,13 @@ export class Badge extends BaseEntity {
 
     @Column()
     name: string;
-    
-    @Column()
-    icon_path: string;
 
     @Column()
-    icon_color: string;
+    bg_color: string;
 
     @Column()
     description: string;
+
+    @Column({nullable: true})
+    data_uri: string; 
 }
