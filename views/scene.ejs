@@ -5,7 +5,7 @@
       <% for (var i = 0; i < scene.badges.length; i++) { %>
         <div class="badge">
           <div class="icon" style="background-color: <%= scene.badges[i].bg_color %>">
-            <img src="<%= scene.badges[i].data_uri %>" alt="Search">
+            <img src="<%= scene.badges[i].data_uri %>" alt="Badge">
           </div>
           <div class="badge-hint">
             <h3 class="badge-name">Badge: <%= scene.badges[i].name %></h3>
@@ -46,8 +46,8 @@
               <div class="child-badge-wrapper">
                 <% for (var j = 0; j < scene.children[i].badges.length; j++) { %>
                 <div class="badge">
-                  <div class="icon" style="background-color: <%= scene.children[i].badges[j].icon_color %>">
-                    <img src="/img/icons/badges/<%= scene.children[i].badges[j].icon_path %>" alt="Search">
+                  <div class="icon" style="background-color: <%= scene.children[i].badges[j].bg_color %>">
+                    <img src="<%= scene.children[i].badges[j].data_uri %>" alt="Badge">
                   </div>
                   <div class="badge-hint">
                     <h3 class="badge-name">Badge: <%= scene.children[i].badges[j].name %></h3>
