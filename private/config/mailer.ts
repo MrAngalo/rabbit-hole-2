@@ -7,7 +7,7 @@ let sender: string;
 let globals: any;
 
 
-let mailer = { initTransporter, closeTransporter, sendMail, sendVerificationEmail };
+let mailer = { initTransporter, closeTransporter, sendMail, sendVerificationEmail, sendResetPasswordEmail };
 module.exports = mailer;
 export = mailer;
 
@@ -46,4 +46,10 @@ async function sendVerificationEmail(email: string, token: string) {
     let subject = 'Verify Your Email';
     let url = `${process.env.ABSOLUTE_URL}/login?token=${token}`;
     await sendMail(email, subject, 'verify', { token, subject, url });
+}
+
+async function sendResetPasswordEmail(email: string, token: string) {
+    let subject = 'Reset Your Password';
+    let url = `${process.env.ABSOLUTE_URL}/pwnew?token=${token}`;
+    await sendMail(email, subject, 'pwreset', { token, subject, url });
 }
