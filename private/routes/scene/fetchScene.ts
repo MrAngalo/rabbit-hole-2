@@ -1,6 +1,6 @@
 import express from "express";
 import { DataSource } from "typeorm";
-import { Scene } from "../entities/Scene";
+import { Scene } from "../../entities/Scene";
 
 module.exports = fetchSceneRouter
 export = fetchSceneRouter;

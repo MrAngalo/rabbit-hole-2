@@ -1,0 +1,12 @@
+<div class="container">
+    <h1>Reset Your Password</h1>
+    <p>Enter your email below, and you will receive an email with instructions to reset your password!</p>
+    <form action="/pwreset" method="POST">
+        <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
+        <div>
+            <input type="email" name="email" placeholder="Email" value="<%= (locals.fields && locals.fields.email) ? locals.fields.email : '' %>" required>
+        </div>
+        <button type="submit">Reset Password</button>
+    </form>
+    <p><a href="/login">Remember your password?</a></p>
+</div>

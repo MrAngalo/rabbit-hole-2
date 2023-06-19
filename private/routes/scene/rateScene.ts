@@ -1,8 +1,8 @@
 import express from "express";
-import { checkAuthenticated } from "./middleware";
-import { User } from "../entities/User";
-import { Scene } from "../entities/Scene";
-import { RatingType, SceneRating } from "../entities/Rating";
+import { checkAuthenticated } from "../middleware";
+import { User } from "../../entities/User";
+import { Scene } from "../../entities/Scene";
+import { RatingType, SceneRating } from "../../entities/Rating";
 import { DataSource } from "typeorm";
 
 module.exports = rateSceneRouter

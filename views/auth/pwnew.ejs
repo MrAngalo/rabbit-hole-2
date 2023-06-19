@@ -1,0 +1,18 @@
+<div class="container">
+    <h1>Reset Your Password</h1>
+    <form action="/pwnew" method="POST">
+        <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
+        <input type="hidden" name="token" value="<%= locals.token %>">
+        <div>
+            <input type="email" name="email" placeholder="Email" value="<%= (locals.fields && locals.fields.email) ? locals.fields.email : '' %>" required>
+        </div>
+        <div>
+            <input type="password" name="password" placeholder="New Password" required>
+        </div>
+        <div>
+            <input type="password" name="password2" placeholder="Confirm New Password" required>
+        </div>
+        <button type="submit">Reset Password</button>
+    </form>
+    <p><a href="/login">Remember your password?</a></p>
+</div>

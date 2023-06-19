@@ -1,8 +1,8 @@
 import express from 'express';
-import { User } from '../entities/User';
-import { Scene } from '../entities/Scene';
-import { tenorIdsExist } from '../config/tenor-utils';
-import { checkAuthenticated } from './middleware';
+import { User } from '../../entities/User';
+import { Scene } from '../../entities/Scene';
+import { tenorIdsExist } from '../../config/tenor-utils';
+import { checkAuthenticated } from '../middleware';
 import { DataSource } from 'typeorm';
 
 module.exports = createSceneRouter

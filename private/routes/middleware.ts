@@ -21,6 +21,9 @@ function configLocals() {
             res.locals.myinfo = (req.session as any).myinfo || req.flash();
             res.locals.fields = (req.session as any).fields || {};
 
+            if (res.locals.css == undefined)
+                res.locals.css = [res.locals.filename]; 
+
             res.locals.static = {
                 scene_count: Scene.scene_count,
                 last_id: Scene.last_id,

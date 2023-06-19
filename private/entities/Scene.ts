@@ -14,7 +14,7 @@ export class Scene extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Scene, scene => scene.children)
+    @ManyToOne(() => Scene, scene => scene.children, {nullable: true, onDelete: "SET NULL"})
     @JoinColumn()
     parent: Scene;
 
@@ -25,7 +25,7 @@ export class Scene extends BaseEntity {
     @JoinTable({name: "scene_badge_jointable"})
     badges: Badge[];
 
-    @ManyToOne(() => User, user => user.scenes)
+    @ManyToOne(() => User, user => user.scenes, { nullable: true, onDelete: "SET NULL"})
     @JoinColumn()
     creator: User;
 

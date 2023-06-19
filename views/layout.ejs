@@ -5,23 +5,27 @@
         <title>Rabbit Search</title>
         <link rel="stylesheet" href="/css/layout.css">
         <link rel="stylesheet" href="/css/fragments/header.css">
-        <link rel="stylesheet" href="/css/<%= filename %>.css">
+        <% for( let i = 0; i < locals.css.length; i++) { %>
+        <link rel="stylesheet" href="/css/<%= locals.css[i] %>.css">
+        <% } %>
         <link rel="icon" href="/img/icons/rabbit.svg" type="image/icon type">
     </head>
     <body>
         <div class="content">
-            <header><%- include('fragments/header'); %></header>
+            <header>
+            <%- include('fragments/header'); %>
+            </header>
             <main>
-                <% if (myinfo.info) { %>
-                    <div class="message green"><%- myinfo.info %></div>
-                <% } %>
-                <% if (myinfo.warn) { %>
-                    <div class="message yellow"><%- myinfo.warn %></div>
-                <% } %>
-                <% if (myinfo.error) { %>
-                    <div class="message red"><%- myinfo.error %></div>
-                <% } %>
-                <%- body %>
+            <% if (myinfo.info) { %>
+                <div class="message green"><%- myinfo.info %></div>
+            <% } %>
+            <% if (myinfo.warn) { %>
+                <div class="message yellow"><%- myinfo.warn %></div>
+            <% } %>
+            <% if (myinfo.error) { %>
+                <div class="message red"><%- myinfo.error %></div>
+            <% } %>
+            <%- body %>
             </main>
             <footer>
                 &copy; Copyright <%= moment().year(); %> Rabbit Search | Guilherme Silva | https://github.com/MrAngalo/rabbit-hole-2

@@ -31,19 +31,19 @@
         </div>
         <div class="menu profile">
             <% if (locals.user) { //logged in %> 
-                <a href="/account">
-                    <div class="icon button">
-                        <img src="/img/icons/profile.svg" alt="Account">
-                    </div>
-                    <div class="username label"><%= locals.user.username %></div>
-                </a>
+            <a href="/account">
+                <div class="icon button">
+                    <img src="/img/icons/profile.svg" alt="Account">
+                </div>
+                <div class="username label"><%= locals.user.username %></div>
+            </a>
             <% } else { //not logged in %>
-                <a href="/login">
-                    <div class="icon button">
-                        <img src="/img/icons/profile.svg" alt="Account">
-                    </div>
-                    <div class="username label">Login</div>
-                </a>
+            <a href="/login">
+                <div class="icon button">
+                    <img src="/img/icons/profile.svg" alt="Account">
+                </div>
+                <div class="username label">Login</div>
+            </a>
             <% } %> 
         </div>
     </div>

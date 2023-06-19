@@ -1,0 +1,20 @@
+<div class="container">
+    <h1>Register</h1>
+    <form action="/register" method="POST">
+        <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
+        <div>
+            <input type="email" name="email" placeholder="Email" value="<%= (locals.fields && locals.fields.email) ? locals.fields.email : '' %>" required>
+        </div>
+        <div>
+            <input type="text" name="username" placeholder="Username" value="<%= (locals.fields && locals.fields.username) ? locals.fields.username : '' %>" required>
+        </div>
+        <div>
+            <input type="password" name="password" placeholder="Password" required>
+        </div>
+        <div>
+            <input type="password" name="password2" placeholder="Confirm Password" required>
+        </div>
+        <button type="submit">Register</button>
+    </form>
+    <p><a href="/login">Already have an account?</a></p>
+</div>

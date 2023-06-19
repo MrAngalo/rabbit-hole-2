@@ -2,53 +2,48 @@ import express, { RequestHandler } from 'express';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import { PassportStatic } from 'passport';
-import { checkAuthenticated, checkNotAuthenticated } from './middleware';
-import { User } from '../entities/User';
-import { Token, TokenType } from '../entities/Token'
+import { checkAuthenticated, checkNotAuthenticated } from '../middleware';
+import { User } from '../../entities/User';
+import { Token, TokenType } from '../../entities/Token'
 import { Brackets, DataSource } from 'typeorm';
-import { sendMail, sendResetPasswordEmail, sendVerificationEmail } from '../config/mailer';
+import { sendMail, sendResetPasswordEmail, sendVerificationEmail } from '../../config/mailer';
 
-module.exports = authenticationRouter
-export = authenticationRouter;
+module.exports = authRouter
+export = authRouter;
 
 const router = express.Router();
-function authenticationRouter(config:{dataSource: DataSource, passport: PassportStatic}) {
+function authRouter(config:{dataSource: DataSource, passport: PassportStatic}) {
     
     router.get('/login', checkNotAuthenticated, function (req, res) {
         //from verification emails
         let token = (req.query.token != undefined) ? req.query.token+'' : null;
-        res.render("login", {csrfToken: req.csrfToken(), token });
+        res.render("auth/login", {css: ['auth/layout'], csrfToken: req.csrfToken(), token });
     });
 
     router.get('/register', checkNotAuthenticated, function (req, res) {
-        res.render("register", {csrfToken: req.csrfToken()});
+        res.render("auth/register", {css: ['auth/layout'], csrfToken: req.csrfToken()});
     });
     
     router.get('/verify', checkNotAuthenticated, function (req, res) {
-        res.render("verify", {csrfToken: req.csrfToken()});
-    });
-
-    router.get('/account', checkAuthenticated, function (req, res) {
-        res.render("account", {csrfToken: req.csrfToken()});
-    });
-
-    router.get('/logout', function (req, res) {
-        res.redirect('/account');
+        res.render("auth/verify", {css: ['auth/layout'], csrfToken: req.csrfToken()});
     });
     
     router.get('/pwreset', function (req, res) {
-        res.render("pwreset", {csrfToken: req.csrfToken()});
+        res.render("auth/pwreset", {css: ['auth/layout'], csrfToken: req.csrfToken()});
     });
 
     router.get('/pwnew', function (req, res) {
         let token = req.query.token; //must have token to continue
         if (token != undefined) {
-            res.render("pwnew", {csrfToken: req.csrfToken(), token });
+            res.render("auth/pwnew", {css: ['auth/layout'], csrfToken: req.csrfToken(), token });
         } else {
             res.redirect('/pwreset');
         }
     });
 
+    router.get(['/account', '/logout'], checkAuthenticated, function (req, res) {
+        res.render("auth/account", {csrfToken: req.csrfToken()});
+    });
 
     router.post('/register', checkNotAuthenticated, async function (req, res) {
         const username:string = req.body.username;
@@ -158,7 +153,8 @@ function authenticationRouter(config:{dataSource: DataSource, passport: Passport
             .getMany();
 
         //found old tokens which may be valid, expired, spam, and/or to other users
-        if (previousTokens.length > 0) {
+        //lenience is 1 token
+        if (previousTokens.length > 1) {
 
             //filters tokens that were created in the last five minutes;
             const spamThreshold = 5*60*1000; //5 minutes;
@@ -239,7 +235,8 @@ function authenticationRouter(config:{dataSource: DataSource, passport: Passport
             .getMany();
 
         //found old tokens which may be valid, expired, spam, and/or to other users
-        if (previousTokens.length > 0) {
+        //lenience is 1 token
+        if (previousTokens.length > 1) {
 
             //filters tokens that were created in the last five minutes;
             const spamThreshold = 5*60*1000; //5 minutes;

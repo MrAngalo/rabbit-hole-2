@@ -12,7 +12,7 @@ export class Token extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.tokens)
+  @ManyToOne(() => User, (user) => user.tokens, { onDelete: "CASCADE"})
   @JoinColumn()
   owner: User;
 

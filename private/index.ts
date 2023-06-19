@@ -9,11 +9,11 @@ import PGSimple from 'connect-pg-simple';
 import { DataSource } from 'typeorm';
 import { PostgresDriver } from 'typeorm/driver/postgres/PostgresDriver';
 import { initPassport } from './config/passport-config';
-import createSceneRouter from './routes/createSceneRouter';
-import authenticationRouter from './routes/authenticationRouter';
-import fetchSceneRouter from './routes/fetchSceneRouter';
+import createSceneRouter from './routes/scene/createScene';
+import authRouter from './routes/auth/authRouter';
+import fetchSceneRouter from './routes/scene/fetchScene';
 import fetchTenorRouter from './routes/fetchTenorRouter';
-import rateSceneRouter from './routes/rateSceneRouter';
+import rateSceneRouter from './routes/scene/rateScene';
 import guidelineRouter from './routes/guidelinesRouter';
 import homeRouter from './routes/homeRouter';
 import csrf from 'csurf';
@@ -188,7 +188,7 @@ async function mainApp() {
   //page routers
   app.use(homeRouter());
   app.use(guidelineRouter());
-  app.use(authenticationRouter({ dataSource, passport }));
+  app.use(authRouter({ dataSource, passport }));
   app.use(fetchSceneRouter({ dataSource }));
   app.use(rateSceneRouter({ dataSource }))
   app.use(createSceneRouter({ dataSource }));
