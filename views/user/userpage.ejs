@@ -1,0 +1,17 @@
+<div class="title">
+    <h1>Profile of <%= locals.user.username %></h1>
+    <div>Joined: <%= locals.moment(new Date(locals.user.created)).format('Do MMMM, YYYY') %></div>
+    <div>Permission Level: <%= locals.UserPremission[locals.user.permission] %></div>
+</div>
+<div class="gallery" token="<%= csrfToken %>">
+    <% for (let i = 0; i < locals.user.scenes.length; i++) { %>
+    <a class="scene" href="/scene/<%= locals.user.scenes[i].id %>">
+        <img class="scene-gif tenor-load" src="" gif-id="<%= locals.user.scenes[i].gifId %>" alt=" ">
+        <h3 class="scene-title"><%= locals.user.scenes[i].title %></h3>
+    </a>
+    <% } %>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="/js/userpage.js"></script>
+

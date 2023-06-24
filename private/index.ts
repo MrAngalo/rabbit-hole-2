@@ -11,8 +11,9 @@ import { PostgresDriver } from 'typeorm/driver/postgres/PostgresDriver';
 import { initPassport } from './config/passport-config';
 import createSceneRouter from './routes/scene/createScene';
 import authRouter from './routes/auth/authRouter';
+import userRouter from './routes/user/userRouter';
 import fetchSceneRouter from './routes/scene/fetchScene';
-import fetchTenorRouter from './routes/fetchTenorRouter';
+import tenorApiRouter from './routes/api/tenorApiRouter';
 import rateSceneRouter from './routes/scene/rateScene';
 import guidelineRouter from './routes/guidelinesRouter';
 import homeRouter from './routes/homeRouter';
@@ -185,14 +186,15 @@ async function mainApp() {
   //load default values to locals
   app.use(configLocals());
 
-  //page routers
+  //routers
   app.use(homeRouter());
   app.use(guidelineRouter());
   app.use(authRouter({ dataSource, passport }));
   app.use(fetchSceneRouter({ dataSource }));
   app.use(rateSceneRouter({ dataSource }))
   app.use(createSceneRouter({ dataSource }));
-  app.use(fetchTenorRouter({ Tenor }));
+  app.use(userRouter({ dataSource }));
+  app.use(tenorApiRouter({ Tenor }));
 
   //handle errors
   app.use(handleErrors);

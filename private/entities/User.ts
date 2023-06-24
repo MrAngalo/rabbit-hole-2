@@ -3,6 +3,13 @@ import { UserRating, SceneRating } from "./Rating";
 import { Scene } from "./Scene";
 import { Token, TokenType } from "./Token";
 
+export enum UserPremission {
+    USER = 1,
+    MODERATOR = 2,
+    ADMINISTRATOR = 3,
+    OWNER = 4,
+}
+
 @Entity('users')
 export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
@@ -23,7 +30,7 @@ export class User extends BaseEntity {
     @Column({default: false})
     confirmed: boolean;
 
-    @Column({type: "integer", default: 0})
+    @Column({type: "enum", enum: UserPremission, default: UserPremission.USER})
     permission: number;
 
     @CreateDateColumn()

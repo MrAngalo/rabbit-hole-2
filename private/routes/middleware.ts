@@ -15,14 +15,14 @@ function configLocals() {
         let old_render = res.render;
         
         res.render = function (view, options?, fn?) {
-            res.locals.filename = view.split('\\').pop()?.split('/').pop();
+            // res.locals.filename = view.split('\\').pop()?.split('/').pop();
             res.locals.user = req.user;
             res.locals.moment = moment;
             res.locals.myinfo = (req.session as any).myinfo || req.flash();
             res.locals.fields = (req.session as any).fields || {};
 
             if (res.locals.css == undefined)
-                res.locals.css = [res.locals.filename]; 
+                res.locals.css = [view]; 
 
             res.locals.static = {
                 scene_count: Scene.scene_count,

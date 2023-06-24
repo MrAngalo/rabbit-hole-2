@@ -15,7 +15,11 @@
       <% } %>
     </div>
   </div>
+  <% if (scene.creator != null) { %>
+  <div>Created by: <a href="/user/<%= scene.creator_name %>"><%= scene.creator_name %></a></div>
+  <% } else { %>
   <div>Created by: <%= scene.creator_name %></div>
+  <% } %>
   <div>Created on: <%= moment(new Date(scene.created)).format('Do MMMM, YYYY') %></div>
 </div>
 <div class="description-wrapper">

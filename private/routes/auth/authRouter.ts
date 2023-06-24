@@ -41,8 +41,8 @@ function authRouter(config:{dataSource: DataSource, passport: PassportStatic}) {
         }
     });
 
-    router.get(['/account', '/logout'], checkAuthenticated, function (req, res) {
-        res.render("auth/account", {csrfToken: req.csrfToken()});
+    router.get('/logout', function (req, res) {
+        res.redirect('/account');
     });
 
     router.post('/register', checkNotAuthenticated, async function (req, res) {

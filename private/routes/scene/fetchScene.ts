@@ -29,11 +29,13 @@ function fetchSceneRouter(config:{dataSource: DataSource}) {
 
         const scene = await config.dataSource.getRepository(Scene)
             .createQueryBuilder('scene')
+            .leftJoinAndSelect('scene.creator', 'creator')
             .leftJoinAndSelect('scene.badges', 'badges')
             .leftJoinAndSelect('scene.children', 'children')
             .leftJoinAndSelect('children.badges', 'children_badges')
             .select([
                 'scene',
+                'creator.id',
                 'children.id',
                 'children.title',
                 'children.likes',
@@ -43,9 +45,6 @@ function fetchSceneRouter(config:{dataSource: DataSource}) {
             ])
             .where('scene.id = :id', { id })
             .getOne() as Scene; //always exists
-            
-        //scenes cannot have themselves as children (fix for scene 0)
-        // scene.children = scene.children.filter(child => child.id != scene.id);
 
         scene.children.sort((a, b) => {
             if (b.badges.length > a.badges.length) return 1;

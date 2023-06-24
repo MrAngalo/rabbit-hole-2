@@ -1,10 +1,11 @@
-<h1>Send Verification Email</h1>
-<form action="/verify" method="POST">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-    <div>
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" value="<%= (fields && fields.email) ? fields.email : '' %>" required>
-    </div>
-    <button type="submit">Verify</button>
-</form>
-<div>Don't have an account? <a href="/register">Register</a> here</div>
+<div class="container">
+    <h1>Send Verification Email</h1>
+    <form action="/verify" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div>
+            <input type="email" name="email" placeholder="Email" value="<%= (locals.fields && locals.fields.email) ? locals.fields.email : '' %>" required>
+        </div>
+        <button type="submit">Verify</button>
+    </form>
+    <p><a href="/register">Don't have an account?</a></p>
+</div>

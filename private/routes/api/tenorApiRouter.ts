@@ -1,9 +1,9 @@
 import express from "express";
 
-module.exports = fetchTenorRouter
-export = fetchTenorRouter;
+module.exports = tenorApiRouter
+export = tenorApiRouter;
 
-function fetchTenorRouter(config:{Tenor: any}) {
+function tenorApiRouter(config:{Tenor: any}) {
 
     const router = express.Router();
     router.post('/api/gif', async function (req, res) {
@@ -11,7 +11,7 @@ function fetchTenorRouter(config:{Tenor: any}) {
 
         let id:string = req.body.id || '';
         
-        config.Tenor.Search.Find([id]).then((results:any) => {
+        config.Tenor.Search.Find(id.split(',')).then((results:any) => {
             res.status(200).json({results});
         }).catch((e:Error) => {
             console.log("");
