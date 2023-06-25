@@ -15,7 +15,7 @@ function userRouter(config:{dataSource: DataSource}) {
 
     router.get('/user/:username', async function (req, res) {
         const username = req.params.username;
-        const user = await config.dataSource.getRepository(User)
+        const user2 = await config.dataSource.getRepository(User)
             .createQueryBuilder('user')
             .leftJoinAndSelect('user.scenes', 'scenes')
             .select([
@@ -34,13 +34,14 @@ function userRouter(config:{dataSource: DataSource}) {
             .orderBy('scenes.id', 'DESC')
             .getOne();
         
-        if (user == null) {
+        if (user2 == null) {
             (req.session as any).myinfo = { error: `Error: The user "${username}" does not exist or was removed!`};
             res.redirect(`/`);
             return;
         }
 
-        res.render("user/userpage", { user, UserPremission, csrfToken: req.csrfToken()});
+        //the variable user is dedicated for current logged on sessions
+        res.render("user/userpage", { user2, UserPremission, csrfToken: req.csrfToken()});
     });
 
     return router;

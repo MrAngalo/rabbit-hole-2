@@ -1,13 +1,13 @@
 <div class="title">
-    <h1>Profile of <%= locals.user.username %></h1>
-    <div>Joined: <%= locals.moment(new Date(locals.user.created)).format('Do MMMM, YYYY') %></div>
-    <div>Permission Level: <%= locals.UserPremission[locals.user.permission] %></div>
+    <h1>Profile of <%= locals.user2.username %></h1>
+    <div>Joined: <%= locals.moment(new Date(locals.user2.created)).format('Do MMMM, YYYY') %></div>
+    <div>Permission Level: <%= locals.UserPremission[locals.user2.permission].toLowerCase() %></div>
 </div>
 <div class="gallery" token="<%= csrfToken %>">
-    <% for (let i = 0; i < locals.user.scenes.length; i++) { %>
-    <a class="scene" href="/scene/<%= locals.user.scenes[i].id %>">
-        <img class="scene-gif tenor-load" src="" gif-id="<%= locals.user.scenes[i].gifId %>" alt=" ">
-        <h3 class="scene-title"><%= locals.user.scenes[i].title %></h3>
+    <% for (let i = 0; i < locals.user2.scenes.length; i++) { %>
+    <a class="scene" href="/scene/<%= locals.user2.scenes[i].id %>">
+        <img class="scene-gif tenor-load" src="" gif-id="<%= locals.user2.scenes[i].gifId %>" alt=" ">
+        <h3 class="scene-title"><%= locals.user2.scenes[i].title %></h3>
     </a>
     <% } %>
 </div>
