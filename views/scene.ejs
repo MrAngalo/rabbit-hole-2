@@ -34,44 +34,44 @@
     <% } %>
     <div class="choice-wrapper">
       <% for (var i = 0; i < options.length; i++) { %>
-        <% if (options[i].id != -1) { %> 
-          <div class="choice">
-            <a href="/scene/<%= options[i].id %>">
-              <div class="button">
-                <%= options[i].title %>
+      <% if (options[i].id != -1) { %> 
+      <div class="choice">
+        <a href="/scene/<%= options[i].id %>">
+          <div class="button">
+            <%= options[i].title %>
+          </div>
+        </a>
+        <% if (scene.children[i]) { %> 
+        <div class="child-attributes">
+          <div class="child-rating-wrapper">
+            <div class="child-rating green"><%= scene.children[i].likes%></div>
+            <div class="child-rating red"><%= -scene.children[i].dislikes%></div>
+          </div>
+          <div class="child-badge-wrapper">
+            <% for (var j = 0; j < scene.children[i].badges.length; j++) { %>
+            <div class="badge">
+              <div class="icon" style="background-color: <%= scene.children[i].badges[j].bg_color %>">
+                <img src="<%= scene.children[i].badges[j].data_uri %>" alt="Badge">
               </div>
-            </a>
-            <% if (scene.children[i]) { %> 
-            <div class="child-attributes">
-              <div class="child-rating-wrapper">
-                <div class="child-rating green"><%= scene.children[i].likes%></div>
-                <div class="child-rating red"><%= -scene.children[i].dislikes%></div>
-              </div>
-              <div class="child-badge-wrapper">
-                <% for (var j = 0; j < scene.children[i].badges.length; j++) { %>
-                <div class="badge">
-                  <div class="icon" style="background-color: <%= scene.children[i].badges[j].bg_color %>">
-                    <img src="<%= scene.children[i].badges[j].data_uri %>" alt="Badge">
-                  </div>
-                  <div class="badge-hint">
-                    <h3 class="badge-name">Badge: <%= scene.children[i].badges[j].name %></h3>
-                    <div class="badge-description"><%= scene.children[i].badges[j].description %></div>
-                  </div>
-                </div>
-                <% } %>
+              <div class="badge-hint">
+                <h3 class="badge-name">Badge: <%= scene.children[i].badges[j].name %></h3>
+                <div class="badge-description"><%= scene.children[i].badges[j].description %></div>
               </div>
             </div>
             <% } %>
           </div>
-        <% } else { %>
-          <div class="choice">
-            <a href="/create/<%= scene.id %>">
-              <div class="button create">
-                <%= options[i].title %>
-              </div>
-            </a>
+        </div>
+        <% } %>
+      </div>
+      <% } else { %>
+      <div class="choice">
+        <a href="/create/<%= scene.id %>">
+          <div class="button create">
+            <%= options[i].title %>
           </div>
-        <% } %> 
+        </a>
+      </div>
+      <% } %> 
       <% } %>
     </div>
     <p>Scene ID: <%= scene.id %></p>

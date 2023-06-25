@@ -29,3 +29,24 @@
   border-radius: 10px;
   background: #799ce6;
 }
+
+.description-wrapper .description .button-wrapper {
+  position: relative;
+  display: block;
+  width: fit-content;
+}
+.description-wrapper .description .button-wrapper .button {
+  text-decoration: none;
+  padding: 15px;
+  font-family: 'Arial';
+  font-size: 22px;
+  letter-spacing: -0.5px;
+  text-align: center;
+  border-radius: 10px;
+  background: #799ce6;
+  display: block;
+}
+
+.description-wrapper .description .discord-widget {
+  margin-bottom: 20px;
+}

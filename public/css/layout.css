@@ -31,7 +31,8 @@ footer {
 .button {
   border: 0;
   box-shadow: #4e4e4e -1px -1px 4px 1px;
-  transform: translate(-2px, -2px);
+  transform: translate(0, -2px);
+  margin-bottom: 5px;
   background: #799ce6;
   cursor: pointer;
 }
