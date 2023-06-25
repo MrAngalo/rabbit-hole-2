@@ -1,0 +1,8 @@
+.guidelines {
+    width: 50%;
+    min-width: 400px;
+}
+
+.guidelines ol > li {
+    margin-bottom: 20px;
+}

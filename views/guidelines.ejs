@@ -1,3 +1,16 @@
-<p>
-    Don't be an asshole
-</p>
+<div class="guidelines">
+    <p>The following guidelines must be followed when creating user-generated content</p>
+    <ol>
+        <% for (var i = 1; locals.g[i] != undefined; i++) { %>
+        <li><%= locals.g[i] %>
+            <% if (locals.g[i+'.1'] != undefined) { %>
+            <ul>
+            <% for (var j = 1; locals.g[i+'.'+j] != undefined; j++) { %>
+                <li><%= locals.g[i+'.'+j] %></li>
+            <% } %>
+            </ul>
+            <% } %>
+        </li>
+        <% } %>
+    </ol>
+</div>
