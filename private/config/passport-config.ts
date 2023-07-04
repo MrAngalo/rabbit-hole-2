@@ -4,17 +4,13 @@ import bcrypt from 'bcrypt';
 import { VerifyFunctionWithRequest } from 'passport-local';
 import { DataSource, ObjectLiteral } from 'typeorm';
 import { User } from '../entities/User';
-import { Token, TokenType } from '../entities/Token';
-
-let pass = { initPassport }
-module.exports = pass;
-export = pass;
+import { Token } from '../entities/Token';
 
 let dataSource: DataSource;
 let getUserByEmail:(email: string) => Promise<User | null>;
 let getUserById:(id: number) => Promise<User | null>;
 
-async function initPassport(passport:PassportStatic, _dataSource: DataSource) {
+export async function initPassport(passport:PassportStatic, _dataSource: DataSource) {
   dataSource = _dataSource;
 
   getUserByEmail = async (email: string) => getUserWhere('user.email = :email', { email });

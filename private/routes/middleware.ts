@@ -1,14 +1,11 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import moment from 'moment';
 import { Scene } from '../entities/Scene';
+import csrf from 'csurf';
+import { ParamsDictionary } from 'express-serve-static-core';
+import { ParsedQs } from 'qs';
 
-let middlewares = { configLocals, checkAuthenticated, checkNotAuthenticated, handleErrors};
-module.exports = middlewares;
-export = middlewares;
-
-type RenderFunction = (view: string, options?: object, fn?: (err: Error, html: string) => void) => void;
-
-function configLocals() {
+export function configLocals() {
     return function (req:Request, res:Response, next: NextFunction) {
 
         //injecting
@@ -32,15 +29,37 @@ function configLocals() {
             (req.session as any).myinfo = null;
             (req.session as any).fields = null;
 
-            old_render(view, options, fn);
-
-        } as RenderFunction;
-
+            old_render(view, options, fn as any);
+        }
         next();
     }
 }
 
-function checkAuthenticated(req:Request, res:Response, next: NextFunction) {
+type ConditionalCSRFOpt = {
+    value?: ((req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>) => string) | undefined;
+    cookie?: boolean | csrf.CookieOptions | undefined;
+    ignoreMethods?: string[] | undefined;
+    sessionKey?: string | undefined;
+    excludes?: RegExp[] | undefined;
+}
+
+export function conditionalCSRF(opt: ConditionalCSRFOpt) {
+    const csrfMW = csrf(opt);
+    if (opt.excludes == undefined)
+        return csrfMW;
+
+    return function (req:Request, res:Response, next: NextFunction) {
+        for (let i = 0; i < opt.excludes!.length; i++) {
+            if (opt.excludes![i].test(req.path)) {
+                next();
+                return;
+            }
+        }
+        csrfMW(req, res, next);
+    }
+}
+
+export function checkAuthenticated(req:Request, res:Response, next: NextFunction) {
     if (req.isAuthenticated())
         return next();
 
@@ -48,7 +67,7 @@ function checkAuthenticated(req:Request, res:Response, next: NextFunction) {
     res.redirect('/login');
 }
 
-function checkNotAuthenticated(req:Request, res:Response, next: NextFunction) {
+export function checkNotAuthenticated(req:Request, res:Response, next: NextFunction) {
     if (!req.isAuthenticated())
         return next();
         
@@ -56,7 +75,7 @@ function checkNotAuthenticated(req:Request, res:Response, next: NextFunction) {
     res.redirect('/');
 }
 
-function handleErrors(err:Error,req:Request,res:Response,next:NextFunction) {
+export function handleErrors(err:Error,req:Request,res:Response,next:NextFunction) {
     if(!err)
         return next();
         

@@ -5,10 +5,7 @@ import { Scene } from "../../entities/Scene";
 import { RatingType, SceneRating } from "../../entities/Rating";
 import { DataSource } from "typeorm";
 
-module.exports = rateSceneRouter
-export = rateSceneRouter;
-
-function rateSceneRouter(config:{dataSource: DataSource}) {
+export function rateSceneRouter(config:{dataSource: DataSource}) {
     const router = express.Router();
 
     router.post('/rate/:id(\\d+)', checkAuthenticated, async function (req, res) {

@@ -6,12 +6,7 @@ let transporter: nodemailer.Transporter<SMTPTransport.SentMessageInfo>;
 let sender: string;
 let globals: any;
 
-
-let mailer = { initTransporter, closeTransporter, sendMail, sendVerificationEmail, sendResetPasswordEmail };
-module.exports = mailer;
-export = mailer;
-
-async function initTransporter(options: SMTPTransport.Options, _globals:any) {
+export async function initTransporter(options: SMTPTransport.Options, _globals:any) {
     transporter = nodemailer.createTransport(options);
     sender = options.auth?.user!;
     globals = _globals;
@@ -28,11 +23,11 @@ async function initTransporter(options: SMTPTransport.Options, _globals:any) {
     });
 }
 
-function closeTransporter() {
+export function closeTransporter() {
     transporter.close();
 }
 
-async function sendMail(email: string, subject: string, view: string, data:ejs.Data) {
+export async function sendMail(email: string, subject: string, view: string, data:ejs.Data) {
     const html = await ejs.renderFile(`${globals.rootdir}/views/emails/${view}.ejs`, data);
     transporter.sendMail({
         from: `"Rabbit Search Game" <${sender}>`,
@@ -42,13 +37,13 @@ async function sendMail(email: string, subject: string, view: string, data:ejs.D
     });
 }
 
-async function sendVerificationEmail(email: string, token: string) {
+export async function sendVerificationEmail(email: string, token: string) {
     let subject = 'Verify Your Email';
     let url = `${process.env.ABSOLUTE_URL}/login?token=${token}`;
     await sendMail(email, subject, 'verify', { token, subject, url });
 }
 
-async function sendResetPasswordEmail(email: string, token: string) {
+export async function sendResetPasswordEmail(email: string, token: string) {
     let subject = 'Reset Your Password';
     let url = `${process.env.ABSOLUTE_URL}/pwnew?token=${token}`;
     await sendMail(email, subject, 'pwreset', { token, subject, url });

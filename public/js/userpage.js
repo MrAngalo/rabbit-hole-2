@@ -27,7 +27,7 @@ jQuery(function() {
         }
 
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/api/gif', true);
+        xhr.open('POST', '/tenor/find', true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.onreadystatechange = () => { // Call a function when the state changes
             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {

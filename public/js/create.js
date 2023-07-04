@@ -4,7 +4,7 @@ jQuery(function() {
         var token = $(img).attr('token');
 
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/api/gif', true);
+        xhr.open('POST', '/tenor/find', true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.onreadystatechange = (e) => { // Call a function when the state changes.
             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
@@ -24,7 +24,7 @@ jQuery(function() {
         var token = $('.text').attr('token');
 
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/api/search', true);
+        xhr.open('POST', '/tenor/search', true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.onreadystatechange = () => { // Call a function when the state changes.
             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
@@ -56,7 +56,7 @@ jQuery(function() {
             return;
 
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/api/gif', true);
+        xhr.open('POST', '/tenor/find', true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.onreadystatechange = () => { // Call a function when the state changes.
             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {

@@ -8,12 +8,9 @@ import { Token, TokenType } from '../../entities/Token'
 import { Brackets, DataSource } from 'typeorm';
 import { sendMail, sendResetPasswordEmail, sendVerificationEmail } from '../../config/mailer';
 
-module.exports = authRouter
-export = authRouter;
-
-const router = express.Router();
-function authRouter(config:{dataSource: DataSource, passport: PassportStatic}) {
+export function authRouter(config:{dataSource: DataSource, passport: PassportStatic}) {
     
+    const router = express.Router();
     router.get('/login', checkNotAuthenticated, function (req, res) {
         //from verification emails
         let token = (req.query.token != undefined) ? req.query.token+'' : null;

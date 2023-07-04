@@ -5,12 +5,9 @@ import { tenorIdsExist } from '../../config/tenor-utils';
 import { checkAuthenticated } from '../middleware';
 import { DataSource } from 'typeorm';
 
-module.exports = createSceneRouter
-export = createSceneRouter;
-
-const router = express.Router();
-function createSceneRouter(config:{dataSource: DataSource}) {
-
+export function createSceneRouter(config:{dataSource: DataSource}) {
+  
+  const router = express.Router();
   router.get('/create', function(req, res) {
     let id:string = (req.query.id != undefined) ? req.query.id+'' : '0';
     if (!id.match(/\d+/))

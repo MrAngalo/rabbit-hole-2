@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-import express from 'express';
+import express, { Router } from 'express';
 import expressLayout from 'express-ejs-layouts';
 import passport from 'passport';
 import flash from 'express-flash';
@@ -9,20 +9,21 @@ import PGSimple from 'connect-pg-simple';
 import { DataSource } from 'typeorm';
 import { PostgresDriver } from 'typeorm/driver/postgres/PostgresDriver';
 import { initPassport } from './config/passport-config';
-import createSceneRouter from './routes/scene/createScene';
-import authRouter from './routes/auth/authRouter';
-import userRouter from './routes/user/userRouter';
-import fetchSceneRouter from './routes/scene/fetchScene';
-import tenorApiRouter from './routes/api/tenorApiRouter';
-import rateSceneRouter from './routes/scene/rateScene';
-import guidelineRouter from './routes/guidelinesRouter';
-import homeRouter from './routes/homeRouter';
-import csrf from 'csurf';
-import { configLocals, handleErrors } from './routes/middleware';
+import { createSceneRouter } from './routes/scene/createScene';
+import { authRouter } from './routes/auth/authRouter';
+import { userRouter } from './routes/user/userRouter';
+import { fetchSceneRouter } from './routes/scene/fetchScene';
+import { tenorRouter } from './routes/tenorRouter';
+import { externalApiRouter } from './routes/api/externalApiRouter';
+import { rateSceneRouter } from './routes/scene/rateScene';
+import { guidelineRouter } from './routes/guidelinesRouter';
+import { homeRouter } from './routes/homeRouter';
+import { conditionalCSRF, configLocals, handleErrors } from './routes/middleware';
 import { Scene } from './entities/Scene';
 import { User } from './entities/User';
 import { Token } from './entities/Token';
 import { Badge } from './entities/Badges'
+import { ApiKey } from './entities/ApiKey';
 import { SceneRating, UserRating } from './entities/Rating';
 import { initTenor, validateTenor } from './config/tenor-utils';
 import { closeTransporter, initTransporter } from './config/mailer';
@@ -73,7 +74,7 @@ async function mainApp() {
     type: 'postgres',
     url: process.env.POSTGRESQL_URL!,
     //ssl: { rejectUnauthorized: false },
-    entities: [ Scene, User, Token, Badge, UserRating, SceneRating ],
+    entities: [ Scene, User, Token, Badge, UserRating, SceneRating, ApiKey ],
     synchronize: true
   });
   await dataSource.initialize(); //establishes connection to postgresql databse
@@ -143,10 +144,11 @@ async function mainApp() {
   //
   // sets up csrf tokens
   //
-  const csrfProtection = csrf({
-    cookie: false
+  const csrfProtection = conditionalCSRF({
+    cookie: false,
+    excludes: [ new RegExp("^/api") ]
   });
-
+  
   console.log('Initialized CSRF Tokens');
   console.log();
   
@@ -177,24 +179,31 @@ async function mainApp() {
   //loads cookies
   app.use(flash());
   app.use(session(sessionConfig));
-  //csrf
-  app.use(csrfProtection);
   //loads active user
   app.use(passport.initialize());
   app.use(passport.session());
+  //csrf protection
+  app.use(csrfProtection);
   //My middleware
   //load default values to locals
   app.use(configLocals());
 
   //routers
-  app.use(homeRouter());
-  app.use(guidelineRouter());
-  app.use(authRouter({ dataSource, passport }));
-  app.use(fetchSceneRouter({ dataSource }));
-  app.use(rateSceneRouter({ dataSource }))
-  app.use(createSceneRouter({ dataSource }));
-  app.use(userRouter({ dataSource }));
-  app.use(tenorApiRouter({ Tenor }));
+  const pages = express.Router();
+  pages.use(homeRouter());
+  pages.use(guidelineRouter());
+  pages.use(authRouter({ dataSource, passport }));
+  pages.use(fetchSceneRouter({ dataSource }));
+  pages.use(rateSceneRouter({ dataSource }))
+  pages.use(createSceneRouter({ dataSource }));
+  pages.use(userRouter({ dataSource }));
+  pages.use(tenorRouter({ Tenor }));
+  app.use(pages);
+
+  //api
+  const api = express.Router();
+  app.use(externalApiRouter({ dataSource, Tenor }));
+  app.use(api);
 
   //handle errors
   app.use(handleErrors);
@@ -221,4 +230,5 @@ async function mainApp() {
 
 mainApp().catch((error) => {
   console.error(error);
+  process.exit();
 });
