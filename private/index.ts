@@ -24,6 +24,7 @@ import { User } from './entities/User';
 import { Token } from './entities/Token';
 import { Badge } from './entities/Badges'
 import { ApiKey } from './entities/ApiKey';
+import { ApiUserToken } from './entities/ApiUserToken';
 import { SceneRating, UserRating } from './entities/Rating';
 import { initTenor, validateTenor } from './config/tenor-utils';
 import { closeTransporter, initTransporter } from './config/mailer';
@@ -74,7 +75,7 @@ async function mainApp() {
     type: 'postgres',
     url: process.env.POSTGRESQL_URL!,
     //ssl: { rejectUnauthorized: false },
-    entities: [ Scene, User, Token, Badge, UserRating, SceneRating, ApiKey ],
+    entities: [ Scene, User, Token, Badge, UserRating, SceneRating, ApiKey, ApiUserToken ],
     synchronize: true
   });
   await dataSource.initialize(); //establishes connection to postgresql databse
@@ -119,7 +120,7 @@ async function mainApp() {
   //
   // initializes passport (keeps track of login authentication)
   //
-  initPassport(passport, dataSource);
+  initPassport({passport, dataSource});
 
   console.log('Initialized Authentication Passport');
   
@@ -202,7 +203,7 @@ async function mainApp() {
 
   //api
   const api = express.Router();
-  app.use(externalApiRouter({ dataSource, Tenor }));
+  app.use(externalApiRouter({ dataSource, passport, Tenor }));
   app.use(api);
 
   //handle errors

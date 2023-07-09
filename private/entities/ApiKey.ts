@@ -1,5 +1,6 @@
-import { BaseEntity, Column, CreateDateColumn, DataSource, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./User";
+import { ApiUserToken } from "./ApiUserToken";
 
 @Entity("api_keys")
 export class ApiKey extends BaseEntity {
@@ -15,5 +16,7 @@ export class ApiKey extends BaseEntity {
 
   @CreateDateColumn({ type: "timestamptz" })
   created: Date;
-  
+
+  @OneToMany(() => ApiUserToken, usertoken => usertoken.apikey, { nullable: true })
+  usertokens: ApiUserToken[];
 }

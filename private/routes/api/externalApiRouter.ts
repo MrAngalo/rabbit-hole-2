@@ -1,23 +1,31 @@
-import express from "express";
+import express, { NextFunction } from "express";
+import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 import { DataSource } from "typeorm";
+import { PassportStatic } from "passport";
 import { guidelines } from "../guidelinesRouter";
-import { ApiKey } from "../../entities/ApiKey";
-import { Scene } from "../../entities/Scene";
-import { JSONResponse } from "../../util/types";
 import { fetchSceneJSON } from "../scene/fetchScene";
 import { userdataJSON } from "../user/userRouter";
+import { authenticateUserJSON } from "../auth/authRouter";
+import { ApiKey } from "../../entities/ApiKey";
+import { Scene } from "../../entities/Scene";
+import { User } from "../../entities/User";
+import { ApiUserToken } from "../../entities/ApiUserToken";
+import { JSONResponse } from "../../util/types";
+import { Request, Response } from "express-serve-static-core";
 
-export function externalApiRouter(config:{dataSource: DataSource, Tenor: any}) {
+export function externalApiRouter(config:{dataSource: DataSource, passport: PassportStatic, Tenor: any}) {
+    //common responses
+    const errApiKey:JSONResponse = { code: 400, error: 'Invalid or Missing API Key'};
+    const errUserToken:JSONResponse = { code: 400, error: 'Invalid or Missing User Token'};
+    const errParam:JSONResponse = { code: 400, error: 'Invalid or Missing Parameter'};
     
     const router = express.Router();
-    const errApiKey:JSONResponse = { code: 400, error: 'Invalid or Missing API Key'};
-    const errParam:JSONResponse = { code: 400, error: 'Invalid or Missing Parameter'};
 
     /*
-    All
+    Middleware
     */
-    //middleware to check if api key is valid
-    router.use(async function (req, res, next) {
+    async function checkApiKey(req: Request, res: Response, next: NextFunction) {
         res.type('application/json');
         const key:string|undefined = req.body.key;
 
@@ -27,25 +35,134 @@ export function externalApiRouter(config:{dataSource: DataSource, Tenor: any}) {
         } 
         const apikey = await config.dataSource.getRepository(ApiKey)
             .createQueryBuilder('key')
-            .select(['key.value'])
+            .select(['key.id','key.value'])
             .where('key.value = :key', { key })
             .getOne();
         if (apikey == null) {
             res.status(400).json(errApiKey);
             return;
         }
+        //payload
+        (req as any).apikey = apikey;
         next();
-    });
+    }
 
+    async function checkUserToken(req:Request, res:Response, next: NextFunction) {
+        const token:string|undefined = req.body.user;
+        if (token == undefined) {
+            res.status(400).json(errUserToken);
+            return;
+        }
+        const apikey:ApiKey = (req as any).apikey;
+        const userid = token.split('-')[0]; //extracts userid from token
+        if (Number.isNaN(parseInt(userid))) {
+            res.status(400).json(errUserToken);
+            return;
+        }
+
+        const usertoken = await config.dataSource.getRepository(ApiUserToken)
+            .createQueryBuilder('usertoken')
+            .select(['usertoken.id', 'usertoken.value'])
+            .where('usertoken.apikeyId = :api', { api: apikey.id })
+            .andWhere('usertoken.userId = :user', { user: userid })
+            .andWhere('usertoken.expires > now()')
+            .getOne();
+        if (usertoken == undefined || !(await bcrypt.compare(token, usertoken.value))) {
+            res.status(400).json(errUserToken);
+            return;
+        }
+        //payload
+        (req as any).userid = userid;
+        next();
+    }
+
+    /*
+    All
+    */
+    router.use(checkApiKey);
+    
     /*
     Authentication
     */
+    router.post('/api/testuser', checkUserToken, async function (req, res) {
+        const response:JSONResponse = { code: 200, response: "success" }
+        res.status(200).json(response);
+    });
     router.post('/api/register', async function (req, res) {});
     router.post('/api/verify', async function (req, res) {});
     router.post('/api/pwreset', async function (req, res) {});
     router.post('/api/pwnew', async function (req, res) {});
-    router.post('/api/login', async function (req, res) {});
-    router.post('/api/logout', async function (req, res) {});
+    router.post('/api/login', async function (req, res) {
+        const email:string|undefined = req.body.email;
+        const password:string|undefined = req.body.password;
+
+        if (email == undefined || password == undefined) {
+            res.status(400).json(errApiKey);
+            return;
+        }
+        const json = await authenticateUserJSON(req, email, password, config);
+        if (json.code == 400) {
+            res.status(json.code).json(json);
+            return;
+        }
+
+        const apikey:ApiKey = (req as any).apikey;
+        const user:User = json.response.user;
+
+        //delete old tokens
+        await config.dataSource.getRepository(ApiUserToken)
+            .createQueryBuilder()
+            .delete()
+            .from(ApiUserToken)
+            .where("apikeyId = :api", { api: apikey.id })
+            .andWhere("userId = :user", { user: user.id })
+            .execute();
+
+        try {
+            //user id is used to query the user later
+            const token = user.id+'-'+crypto.randomBytes(16).toString('hex');
+            const hashToken = await bcrypt.hash(token, 10);
+
+            const apiUserToken = ApiUserToken.create({
+                apikey: apikey,
+                user: user,
+                value: hashToken,
+            });
+            await apiUserToken.save();
+
+            //redacted response
+            const response = {
+                token,
+                user: { username: user.username }
+            }
+            const result:JSONResponse = { code: 200, response };
+            res.status(result.code).json(result);
+            return;
+
+        } catch (err) { //should never happen
+            console.log();
+            console.log(err);
+            const result:JSONResponse = { code: 400, error: "Unknown error occured, contact admin." };
+            res.status(result.code).json(result);
+            return;
+        }
+    });
+    router.post('/api/logout', checkUserToken, async function (req, res) {
+        const apikey:ApiKey = (req as any).apikey;
+        const userid = (req as any).userid;
+
+        //delete old tokens
+        await config.dataSource.getRepository(ApiUserToken)
+            .createQueryBuilder()
+            .delete()
+            .from(ApiUserToken)
+            .where("apikeyId = :api", { api: apikey.id })
+            .andWhere("userId = :user", { user: userid })
+            .execute();
+
+        const result:JSONResponse = { code: 200, response: "User Successfully logged out." };
+        res.status(result.code).json(result);
+    });
 
     /*
     Scene
@@ -119,3 +236,4 @@ export function externalApiRouter(config:{dataSource: DataSource, Tenor: any}) {
     
     return router;
 }
+

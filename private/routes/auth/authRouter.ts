@@ -1,4 +1,4 @@
-import express, { RequestHandler } from 'express';
+import express from 'express';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import { PassportStatic } from 'passport';
@@ -6,7 +6,9 @@ import { checkAuthenticated, checkNotAuthenticated } from '../middleware';
 import { User } from '../../entities/User';
 import { Token, TokenType } from '../../entities/Token'
 import { Brackets, DataSource } from 'typeorm';
-import { sendMail, sendResetPasswordEmail, sendVerificationEmail } from '../../config/mailer';
+import { sendResetPasswordEmail, sendVerificationEmail } from '../../config/mailer';
+import { Request } from 'express-serve-static-core';
+import { JSONResponse } from 'private/util/types';
 
 export function authRouter(config:{dataSource: DataSource, passport: PassportStatic}) {
     
@@ -344,4 +346,37 @@ export function authRouter(config:{dataSource: DataSource, passport: PassportSta
     });
 
     return router;
+}
+
+export async function authenticateUserJSON(req: Request, email: string, password: string, config: {passport:PassportStatic, dataSource: DataSource}) : Promise<JSONResponse> {
+    
+    const user = await config.dataSource.getRepository(User)
+        .createQueryBuilder('user')
+        .select([
+            'user.id',
+            'user.email',
+            'user.username', //not needed for this function, but good utility for dependents
+            'user.password',
+            'user.confirmed',
+        ])
+        .where('user.email = :email', { email })
+        .getOne();
+
+    if (user == null)
+        return { code: 400, error: 'No user with that email' };
+
+    if (!(await bcrypt.compare(password, user.password)))
+        return { code: 400, error: 'Password incorrect' };
+
+    if (!user.confirmed && !(await Token.validate(config.dataSource, req.body.token, user.id, tokenSuccessCB)))
+        return { code: 400, error: 'You must verify your email first' };
+
+    //only executes for those who are not confirmed
+    function tokenSuccessCB(token: Token) {
+        user!.confirmed = true;
+        user!.save(); //async
+        token.remove(); //async
+    }
+
+    return { code: 200, response: { user }};
 }

@@ -1,7 +1,8 @@
-import { BaseEntity, Entity, Column, CreateDateColumn, OneToMany, PrimaryGeneratedColumn, Generated } from "typeorm";
+import { BaseEntity, Entity, Column, CreateDateColumn, OneToMany, PrimaryGeneratedColumn, Generated, OneToOne } from "typeorm";
 import { UserRating, SceneRating } from "./Rating";
 import { Scene } from "./Scene";
-import { Token, TokenType } from "./Token";
+import { Token } from "./Token";
+import { ApiUserToken } from "./ApiUserToken";
 
 export enum UserPremission {
     USER = 1,
@@ -15,7 +16,7 @@ export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({unique: true})
+    @Column({unique: true, select: false})
     username_lower: string;
 
     @Column({unique: true})
@@ -27,19 +28,19 @@ export class User extends BaseEntity {
     @Column({select: false})
     password: string;
 
-    @Column({default: false})
+    @Column({default: false, select: false})
     confirmed: boolean;
 
-    @Column({type: "enum", enum: UserPremission, default: UserPremission.USER})
+    @Column({type: "enum", enum: UserPremission, default: UserPremission.USER, select: false})
     permission: number;
 
-    @CreateDateColumn()
+    @CreateDateColumn({select: false})
     created: Date;
 
-    @Column({type: "integer", default: 0})
+    @Column({type: "integer", default: 0, select: false})
     likes: number;
 
-    @Column({type: "integer", default: 0})
+    @Column({type: "integer", default: 0, select: false})
     dislikes: number;
 
     @OneToMany(() => Scene, scene => scene.creator)
@@ -56,6 +57,9 @@ export class User extends BaseEntity {
 
     @OneToMany(() => Token, token => token.owner)
     tokens: Token[];
+
+    @OneToMany(() => ApiUserToken, usertoken => usertoken.user, { nullable: true })
+    apitokens: ApiUserToken[];
 
     public static validateEmail(email: string) : string | null {
         if (!email.match(
