@@ -10,11 +10,15 @@ import { DataSource } from 'typeorm';
 import { PostgresDriver } from 'typeorm/driver/postgres/PostgresDriver';
 import { initPassport } from './config/passport-config';
 import { createSceneRouter } from './routes/scene/createScene';
-import { authRouter } from './routes/auth/authRouter';
-import { userRouter } from './routes/user/userRouter';
+import { authUserRouter } from './routes/auth/authUserRouter';
+import { authMailerRouter } from './routes/auth/authMailerRouter';
+import { userRouter } from './routes/userRouter';
 import { fetchSceneRouter } from './routes/scene/fetchScene';
 import { tenorRouter } from './routes/tenorRouter';
-import { externalApiRouter } from './routes/api/externalApiRouter';
+import {apiGuidelinesRouter} from './routes/api/apiGuidelinesRouter';
+import {apiUserRouter} from './routes/api/apiUserRouter';
+import {apiSceneRouter} from './routes/api/apiSceneRouter';
+import {apiTenorRouter} from './routes/api/apiTenorRouter';
 import { rateSceneRouter } from './routes/scene/rateScene';
 import { guidelineRouter } from './routes/guidelinesRouter';
 import { homeRouter } from './routes/homeRouter';
@@ -28,6 +32,8 @@ import { ApiUserToken } from './entities/ApiUserToken';
 import { SceneRating, UserRating } from './entities/Rating';
 import { initTenor, validateTenor } from './config/tenor-utils';
 import { closeTransporter, initTransporter } from './config/mailer';
+import { checkApiKey } from './routes/api/apiMiddleware'
+import { apiAuthRouter } from './routes/api/apiAuthRouter';
 
 async function mainApp() {
   
@@ -193,7 +199,8 @@ async function mainApp() {
   const pages = express.Router();
   pages.use(homeRouter());
   pages.use(guidelineRouter());
-  pages.use(authRouter({ dataSource, passport }));
+  pages.use(authUserRouter({ dataSource, passport }));
+  pages.use(authMailerRouter({ dataSource, passport }));
   pages.use(fetchSceneRouter({ dataSource }));
   pages.use(rateSceneRouter({ dataSource }))
   pages.use(createSceneRouter({ dataSource }));
@@ -203,7 +210,12 @@ async function mainApp() {
 
   //api
   const api = express.Router();
-  app.use(externalApiRouter({ dataSource, passport, Tenor }));
+  api.use(checkApiKey({ dataSource })); //middleware that checks the validity of api keys
+  api.use(apiGuidelinesRouter());
+  api.use(apiAuthRouter({ dataSource, passport }));
+  api.use(apiSceneRouter({ dataSource }));
+  api.use(apiTenorRouter({ Tenor }));
+  api.use(apiUserRouter({ dataSource }));
   app.use(api);
 
   //handle errors

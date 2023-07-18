@@ -2,7 +2,7 @@ import express from "express";
 import { DataSource } from "typeorm";
 import { Scene } from "../../entities/Scene";
 import { Request, Response } from "express-serve-static-core";
-import { JSONResponse } from "../../util/types";
+import { JSONResponse } from "../middleware";
 
 export function fetchSceneRouter(config:{dataSource: DataSource}) {
 
@@ -28,13 +28,14 @@ export function fetchSceneRouter(config:{dataSource: DataSource}) {
         json.response.csrfToken = req.csrfToken();
         res.render("scene", json.response);
     });
+
     return router;
 }
 export async function fetchSceneJSON(req:Request,res:Response, config:{dataSource: DataSource}) : Promise<JSONResponse> {
     const id:number = parseInt(req.params.id);
 
     if (!Scene.exists(id))
-        return { code: 400, error: `Scene id=${id} does not exist or has been removed`};
+        return { code: 400, error: `Scene id=${id} does not exist or has been removed`, redirect: '/scene/0' };
 
     const scene = await config.dataSource.getRepository(Scene)
         .createQueryBuilder('scene')
@@ -83,5 +84,5 @@ export async function fetchSceneJSON(req:Request,res:Response, config:{dataSourc
         //only add return option if scene is not root (should only be scene id=0)
         options.push({id: parentId, title: "Go Back!"});
     }
-    return { code: 200, response: { scene, options } };
+    return { code: 200, info: 'Success', response: { scene, options }, redirect: `/scene/${id}`};
 }

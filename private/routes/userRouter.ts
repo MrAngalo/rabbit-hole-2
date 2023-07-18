@@ -1,9 +1,9 @@
 import express from "express";
 import { DataSource } from "typeorm";
 import { Request, Response } from "express-serve-static-core";
-import { checkAuthenticated } from "../middleware";
-import { User, UserPremission } from "../../entities/User";
-import { JSONResponse } from "private/util/types";
+import { checkAuthenticated } from "./middleware";
+import { User, UserPremission } from "../entities/User";
+import { JSONResponse } from "./middleware";
 
 export function userRouter(config:{dataSource: DataSource}) {
     
@@ -55,7 +55,7 @@ export async function userdataJSON (req:Request, res:Response, config:{dataSourc
         .getOne();
     
     if (user == null) {
-        return {code: 400, error: `The user "${username}" does not exist or was removed!` };
+        return {code: 400, error: `The user "${username}" does not exist or was removed!`, redirect: '/' };
     }
-    return {code: 200, response: { user }}
+    return {code: 200, info: 'Success', response: { user }, redirect: `/user/${username}` }
 }

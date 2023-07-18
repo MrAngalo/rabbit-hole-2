@@ -9,7 +9,7 @@ jQuery(function() {
         xhr.onreadystatechange = () => { // Call a function when the state changes.
             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
                 var a = JSON.parse(xhr.response);
-                var src = a["results"][0]["media"][0]["gif"]["url"];
+                var src = a["response"][0]["media"][0]["gif"]["url"];
                 $(img).attr('src', src);
             }
         }

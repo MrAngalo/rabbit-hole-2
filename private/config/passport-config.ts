@@ -3,7 +3,7 @@ import { PassportStatic } from 'passport';
 import { DataSource } from 'typeorm';
 import { User } from '../entities/User';
 import { Request } from 'express-serve-static-core';
-import { authenticateUserJSON } from '../routes/auth/authRouter';
+import { authenticateUserJSON } from '../routes/auth/authUserRouter';
 
 export async function initPassport(config:{passport:PassportStatic, dataSource: DataSource}) {
 
@@ -17,18 +17,18 @@ export async function initPassport(config:{passport:PassportStatic, dataSource: 
 
   type DoneFn = (error: any, user?: Express.User | false, options?: IVerifyOptions) => void;
   async function authenticateUser(req: Request, email: string, password: string, done: DoneFn) {
-    
+
     const json = await authenticateUserJSON(req, email, password, config);
     if (json.code == 400) {
       if (json.error == 'You must verify your email first')
-        json.error = 'You must verify your email first. Click <a href="/verify">here</a> to resend the verification email';
+        json.error = `${json.error}. Click <a href="/verify">here</a> to resend the verification email`;
 
       (req.session as any).myinfo = { error: json.error }
       return done(null, false);
     }
 
     const user:User = json.response.user;
-    (req.session as any).myinfo = { info: `Welcome ${user.username}!`};
+    (req.session as any).myinfo = { info: json.info };
     done(null, user);
   }
 

@@ -86,3 +86,32 @@ export function handleErrors(err:Error,req:Request,res:Response,next:NextFunctio
     res.send("Something Went Wrong");
     //  return res.redirect(301, 'error.html');
 }
+
+export type JSONResponse =
+    {code: 200, info: string, redirect: string, response?: any} |
+    {code: 400, error: string, redirect: string};
+
+type RenderJSONConfig = {
+    logic: (req: Request, res: Response) => Promise<JSONResponse>
+    saveFieldsOnFail?: boolean
+    displaySuccessInfo?: boolean
+}
+//generic wrapper for redirecting given json response
+export function redirectJSON(config:RenderJSONConfig) {
+    return async function (req: Request, res: Response) {
+        const json = await config.logic(req, res);
+        if (json.code == 400) {
+            (req.session as any).myinfo = { error: json.error };
+
+            if (config.saveFieldsOnFail)
+                (req.session as any).fields = req.body;
+
+            res.redirect(json.redirect);
+            return;
+        }
+        if (config.displaySuccessInfo)
+            (req.session as any).myinfo = { info: json.info };
+
+        res.redirect(json.redirect);
+    }
+}

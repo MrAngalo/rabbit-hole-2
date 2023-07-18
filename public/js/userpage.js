@@ -42,7 +42,7 @@ jQuery(function() {
     requestTenorInBatches(0, (response, b_start, b_last) => {
         var size = b_last - b_start;
         for (var i = 0; i <= size; i++) {
-            var src = response["results"][i]["media"][0]["gif"]["url"];
+            var src = response["response"][i]["media"][0]["gif"]["url"];
             var img = $(html_imgs[b_start + i]);
             $(img).attr('src', src);
         }

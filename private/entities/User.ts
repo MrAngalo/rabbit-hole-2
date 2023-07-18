@@ -61,7 +61,10 @@ export class User extends BaseEntity {
     @OneToMany(() => ApiUserToken, usertoken => usertoken.user, { nullable: true })
     apitokens: ApiUserToken[];
 
-    public static validateEmail(email: string) : string | null {
+    public static validateEmail(email?: string) : string | null {
+        if (email == null)
+            return `Email must be defined!`;
+
         if (!email.match(
             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/))
             return `Email is not valid!`;
@@ -69,7 +72,10 @@ export class User extends BaseEntity {
         return null;
     }
 
-    public static validateUsername(username: string) : string | null {
+    public static validateUsername(username?: string) : string | null {
+        if (username == null)
+            return `Username must be defined!`;
+
         if (username.length < 3)
             return `Username must contain 3 characters!`;
         
@@ -82,9 +88,9 @@ export class User extends BaseEntity {
         return null;
     }
 
-    public static validatePassword(password: string, password2?: string) : string | null {
-        if (password2 != undefined && password != password2)
-            return 'Error: The passwords do not match!';
+    public static validatePassword(password?: string) : string | null {
+        if (password == null)
+            return 'Password must be defiend!';
 
         if (password.length < 8)
             return `Password must contain 8 characters!`;
