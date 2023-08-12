@@ -5,10 +5,11 @@ import { Token } from "./Token";
 import { ApiUserToken } from "./ApiUserToken";
 
 export enum UserPremission {
-    USER = 1,
-    MODERATOR = 2,
-    ADMINISTRATOR = 3,
-    OWNER = 4,
+    VISITOR = 5,
+    TRUSTED = 10,
+    MODERATOR = 80,
+    ADMINISTRATOR = 90,
+    OWNER = 100,
 }
 
 @Entity('users')
@@ -31,7 +32,7 @@ export class User extends BaseEntity {
     @Column({default: false, select: false})
     confirmed: boolean;
 
-    @Column({type: "enum", enum: UserPremission, default: UserPremission.USER, select: false})
+    @Column({type: "enum", enum: UserPremission, default: UserPremission.VISITOR, select: false})
     permission: number;
 
     @CreateDateColumn({select: false})
