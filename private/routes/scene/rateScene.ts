@@ -2,7 +2,7 @@ import express from "express";
 import { Request, Response } from "express-serve-static-core";
 import { JSONResponse, checkAuthenticated, redirectJSON } from "../middleware";
 import { User } from "../../entities/User";
-import { Scene } from "../../entities/Scene";
+import { Scene, SceneStatus } from "../../entities/Scene";
 import { RatingType, SceneRating } from "../../entities/Rating";
 import { DataSource } from "typeorm";
 
@@ -18,15 +18,15 @@ export function rateSceneRouter(config:{dataSource: DataSource}) {
 }
 
 export async function rateSceneJSON(req: Request, res: Response, config: {dataSource: DataSource}) : Promise<JSONResponse> {
-    const id:number = parseInt(req.params.id);
+    const sceneId:number = parseInt(req.params.id);
     const rating = RatingType[req.body.rating.toUpperCase() as keyof typeof RatingType];
     const user = req.user as User;
 
-    if (!Scene.exists(id))
-        return { code: 400, error: `Warning: Scene id=${id} does not exist or has been removed`, redirect: '/' };
+    if (!Scene.exists(sceneId))
+        return { code: 400, error: `Warning: Scene id=${sceneId} does not exist or has been removed`, redirect: '/' };
 
     if (rating == undefined)
-        return { code: 400, error: 'Warning: Rating type must be positive or negative!', redirect: `/scene/${id}` };
+        return { code: 400, error: 'Warning: Rating type must be positive or negative!', redirect: `/scene/${sceneId}` };
 
     //beginning of the day
     let today = new Date();
@@ -60,8 +60,8 @@ export async function rateSceneJSON(req: Request, res: Response, config: {dataSo
     const current_ratings = Object.keys(ratedAt).length;
     const remaining_ratings = max_ratings - current_ratings;
 
-    if (ratedScenes[id] != undefined)
-        return { code: 400, error: `Warning: Your vote is alreayd counted for scene id=${id}! Remaining daily ratings: ${remaining_ratings}!`, redirect: `/scene/${id}`};
+    if (ratedScenes[sceneId] != undefined)
+        return { code: 400, error: `Warning: Your vote is already counted for scene id=${sceneId}! Remaining daily ratings: ${remaining_ratings}!`, redirect: `/scene/${sceneId}`};
 
     if (remaining_ratings <= 0) {
         const tomorrow = new Date();
@@ -71,12 +71,26 @@ export async function rateSceneJSON(req: Request, res: Response, config: {dataSo
         let hrs = Math.floor(min / 60);
         sec -= min*60;
         min -= hrs*60;
-        return { code: 400, error: `Warning: You can only vote ${max_ratings} times per day. Time remaining: ${hrs}h:${min}m:${sec}s!`, redirect: `/scene/${id}`};
+        return { code: 400, error: `Warning: You can only vote ${max_ratings} times per day. Time remaining: ${hrs}h:${min}m:${sec}s!`, redirect: `/scene/${sceneId}`};
     }
+
+    //this is placed here as the last check to avoid unecessary database calls
+    const scene = await config.dataSource.getRepository(Scene)
+      .createQueryBuilder('scene')
+      .select(['scene.id','scene.status'])
+      .where('scene.id = :id', { id: sceneId })
+      .getOne() as Scene; //always exists
+
+    //escapes if scene is of node type
+    if (scene.status != SceneStatus.PUBLIC) {
+        return { code: 400, error: `The scene id=${sceneId} is not open to the public yet!`, redirect: '/'};
+    }
+
+    //success
 
     //vote positive recursively (first 10 parents)
     if (rating == RatingType.POSITIVE) {
-        const ids = Scene.getIdChainToRoot(id);
+        const ids = Scene.getIdChainToRoot(sceneId);
         
         const scenes = await config.dataSource.getRepository(Scene)
         .createQueryBuilder('scene')
@@ -101,14 +115,14 @@ export async function rateSceneJSON(req: Request, res: Response, config: {dataSo
             scene.save();
             sceneRating.save();
         }
-        return { code: 200, info: `Successfully liked scene id=${id} and previous ones! Remaining daily ratings: ${remaining_ratings-1}!`, redirect: `/scene/${id}`};
+        return { code: 200, info: `Successfully liked scene id=${sceneId} and previous ones! Remaining daily ratings: ${remaining_ratings-1}!`, redirect: `/scene/${sceneId}`};
 
     //not recursive
     } else /* if (rating == RatingType.NEGATIVE) */ {
         const scene = await config.dataSource.getRepository(Scene)
             .createQueryBuilder('scene')
             .select(['scene.id', 'scene.dislikes'])
-            .where('scene.id = :id', { id })
+            .where('scene.id = :id', { id: sceneId })
             .getOne() as Scene; //always exists
 
         scene.dislikes++;
@@ -122,6 +136,6 @@ export async function rateSceneJSON(req: Request, res: Response, config: {dataSo
         scene.save(); 
         sceneRating.save();
 
-        return { code: 200, info: `Successfully disliked scene id=${id}! Remaining daily ratings: ${remaining_ratings-1}!`, redirect: `/scene/${id}` };
+        return { code: 200, info: `Successfully disliked scene id=${sceneId}! Remaining daily ratings: ${remaining_ratings-1}!`, redirect: `/scene/${sceneId}` };
     }
 }

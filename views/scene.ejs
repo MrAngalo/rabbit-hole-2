@@ -21,6 +21,7 @@
   <div>Created by: <%= scene.creator_name %></div>
   <% } %>
   <div>Created on: <%= moment(new Date(scene.created)).format('Do MMMM, YYYY') %></div>
+  <div>Released: <%= locals.SceneStatus[locals.scene.status].toLowerCase() %></div>
 </div>
 <div class="description-wrapper">
   <div class="rabbit-gif-wrapper">

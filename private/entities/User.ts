@@ -32,7 +32,7 @@ export class User extends BaseEntity {
     @Column({default: false, select: false})
     confirmed: boolean;
 
-    @Column({type: "enum", enum: UserPremission, default: UserPremission.VISITOR, select: false})
+    @Column({type: "enum", enum: UserPremission, default: UserPremission.VISITOR})
     permission: number;
 
     @CreateDateColumn({select: false})
@@ -43,6 +43,9 @@ export class User extends BaseEntity {
 
     @Column({type: "integer", default: 0, select: false})
     dislikes: number;
+
+    @Column({type: "integer", default: 0, select: false})
+    score: number;
 
     @OneToMany(() => Scene, scene => scene.creator)
     scenes: Scene[]

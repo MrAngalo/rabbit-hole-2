@@ -67,6 +67,7 @@ export async function authenticateUserJSON(req: Request, email: string, password
             'user.username', //not needed for this function, but good utility for dependents
             'user.password',
             'user.confirmed',
+            'user.permission'
         ])
         .where('user.email = :email', { email })
         .getOne();

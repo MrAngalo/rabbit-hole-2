@@ -1,8 +1,9 @@
 import express from "express";
 import { DataSource } from "typeorm";
-import { Scene } from "../../entities/Scene";
+import { Scene, SceneStatus } from "../../entities/Scene";
 import { Request, Response } from "express-serve-static-core";
 import { JSONResponse } from "../middleware";
+import { User, UserPremission } from "../../entities/User";
 
 export function fetchSceneRouter(config:{dataSource: DataSource}) {
 
@@ -55,6 +56,18 @@ export async function fetchSceneJSON(req:Request,res:Response, config:{dataSourc
         ])
         .where('scene.id = :id', { id })
         .getOne() as Scene; //always exists
+    
+    //if the scene is private, only the creator or a moderator can view it
+    if (scene.status != SceneStatus.PUBLIC) {
+
+        const user = req.user as User;
+        if (user == undefined || (user.id != scene.creator.id && user.permission < UserPremission.MODERATOR)) {
+            return { code: 400, error: `The scene id=${id} is not open to the public yet!`, redirect: '/'};
+        }
+
+
+
+    }
 
     scene.children.sort((a, b) => {
         if (b.badges.length > a.badges.length) return 1;
@@ -74,15 +87,18 @@ export async function fetchSceneJSON(req:Request,res:Response, config:{dataSourc
         options.push({id: child.id, title: child.title});
         i++;
     }
-    while (i < Scene.getMaxChildren()) {
-        //scenes with id equal to -1 is a flag to a create new branch
-        options.push({id: -1, title: "Create your action"})
-        i++;
+    //a scene can only have children if it is public, no options given
+    if (scene.status == SceneStatus.PUBLIC) {
+        while (i < Scene.getMaxChildren()) {
+            //scenes with id equal to -1 is a flag to a create new branch
+            options.push({id: -1, title: "Create your action"})
+            i++;
+        }
     }
     let parentId = Scene.getParentId(scene.id);
     if (parentId != null) {
         //only add return option if scene is not root (should only be scene id=0)
         options.push({id: parentId, title: "Go Back!"});
     }
-    return { code: 200, info: 'Success', response: { scene, options }, redirect: `/scene/${id}`};
+    return { code: 200, info: 'Success', response: { scene, options, SceneStatus }, redirect: `/scene/${id}`};
 }

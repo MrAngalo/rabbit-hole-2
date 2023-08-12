@@ -3,6 +3,11 @@ import { SceneRating } from "./Rating";
 import { User } from "./User";
 import { Badge } from "./Badges";
 
+export enum SceneStatus {
+    AWAITING_APPROVAL = 20,
+    PUBLIC = 30,
+}
+
 @Entity('scenes')
 export class Scene extends BaseEntity {
     private static max_children = 3;
@@ -49,6 +54,9 @@ export class Scene extends BaseEntity {
 
     @Column({type: "integer", default: 0})
     dislikes: number;
+
+    @Column({type: "enum", enum: SceneStatus})
+    status: number;
 
     @OneToMany(() => SceneRating, rating => rating.scene)
     rated_by: SceneRating[];

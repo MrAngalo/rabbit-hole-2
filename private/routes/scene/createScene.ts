@@ -1,7 +1,7 @@
 import express from 'express';
 import { Request, Response } from 'express-serve-static-core';
-import { User } from '../../entities/User';
-import { Scene } from '../../entities/Scene';
+import { User, UserPremission } from '../../entities/User';
+import { Scene, SceneStatus } from '../../entities/Scene';
 import { tenorIdsExist } from '../../config/tenor-utils';
 import { JSONResponse, checkAuthenticated, redirectJSON } from '../middleware';
 import { DataSource } from 'typeorm';
@@ -32,12 +32,18 @@ export function createSceneRouter(config:{dataSource: DataSource}) {
           'parent.title',
           'parent.description',
           'parent.gifId',
+          'parent.status',
       ])
       .where('parent.id = :parentId', { parentId })
       .getOne() as Scene; //always exists
 
+    if (parent.status != SceneStatus.PUBLIC) {
+      (req.session as any).myinfo = { error: `The parent scene id=${parentId} is not open to the public yet!` };
+      return res.redirect('/');
+    }
+
     if (!Scene.hasFreeChildSlot(parentId)) {
-      (req.session as any).myinfo = { error: `Error: There are no more children available for parent scene id = ${parentId}!` };
+      (req.session as any).myinfo = { error: `There are no more children available for parent scene id=${parentId}!` };
       return res.redirect('/');
     }
 
@@ -78,33 +84,34 @@ export async function createSceneJSON(req: Request, res: Response, config: { dat
       'parent.title',
       'parent.description',
       'parent.gifId',
+      'parent.status',
   ])
   .where('parent.id = :parentId', { parentId })
   .getOne() as Scene; //always exists
 
-  let error = await (async function() {
-    if (!Scene.hasFreeChildSlot(parent.id)) /* should almost never happen, only for the very unfortunate ones */
-      return `Error: There are no more children available for parent scene id = ${parentId}!`;
-    
-    if (title == undefined || description == undefined || gifId == undefined)
-      return `Error: At least one of the fields is empty!`;
-    
-    if (title.length < 5 || title.length > 40)
-      return `Error: Title length must be between 5 and 40 characters!`;
+  //
+  // data validation
+  //
+  if (parent.status != SceneStatus.PUBLIC)
+    return { code: 400, error: `The parent scene id=${parentId} is not open to the public yet!`, redirect: '/'};
 
-    if (description.length < 80 || description.length > 3000)
-      return `Error: Description length must be between 80 and 3000 characters!`;
+  if (!Scene.hasFreeChildSlot(parent.id)) /* should almost never happen, only for the very unfortunate ones */
+    return { code: 400, error: `There are no more children available for parent scene id = ${parentId}!`, redirect: `/create/${parent.id}/`}
+  
+  if (title == undefined || description == undefined || gifId == undefined)
+    return { code: 400, error: `At least one of the fields is empty!`, redirect: `/create/${parent.id}/`}
 
-    console.log(gifId);
+  if (title.length < 5 || title.length > 40)
+    return { code: 400, error: `Title length must be between 5 and 40 characters!`, redirect: `/create/${parent.id}/`}
+  
+  if (description.length < 80 || description.length > 3000)
+    return { code: 400, error: `Description length must be between 80 and 3000 characters!`, redirect: `/create/${parent.id}/`}
+  
+  if (!(await tenorIdsExist([gifId+''])))
+    return { code: 400, error: `Tenor GIF ID is invalid!`, redirect: `/create/${parent.id}/`}
 
-    if (!(await tenorIdsExist([gifId+''])))
-      return `Error: Tenor GIF ID is invalid!`;
-
-    return null;
-  })();
-
-  if (error)
-    return { code: 400, error, redirect: `/create/${parent.id}/`};
+  //if the user is trusted, their scene is public immediately
+  const status = (user.permission >= UserPremission.TRUSTED) ? SceneStatus.PUBLIC : SceneStatus.AWAITING_APPROVAL;
 
   const scene = Scene.create({
     parent: parent,
@@ -112,11 +119,18 @@ export async function createSceneJSON(req: Request, res: Response, config: { dat
     creator_name: user.username,
     title: title as string,
     description: description as string,
-    gifId: gifId as number
+    gifId: gifId as number,
+    status: status,
   });
 
   await scene.save();
   Scene.addRelationToCache(scene.id, parent.id);
+
+  //this is going to be around 90% of the cases because of new users
+  if (status == SceneStatus.AWAITING_APPROVAL) {
+    //TODO, send email to admins to notify scene requires validation
+
+  }
 
   return { code: 200, info: 'Successfully created scene!', redirect: `/scene/${scene.id}`};
 }

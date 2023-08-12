@@ -28,6 +28,12 @@ export async function initPassport(config:{passport:PassportStatic, dataSource: 
     }
 
     const user:User = json.response.user;
+    
+    //redacting information
+    console.log(user);
+    delete (user as any).password;
+    console.log(user);
+
     (req.session as any).myinfo = { info: json.info };
     done(null, user);
   }
