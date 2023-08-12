@@ -4,12 +4,28 @@ import { Request, Response } from "express-serve-static-core";
 import { checkAuthenticated } from "./middleware";
 import { User, UserPremission } from "../entities/User";
 import { JSONResponse } from "./middleware";
+import moment from "moment";
+import { Scene } from "../entities/Scene";
 
 export function userRouter(config:{dataSource: DataSource}) {
     
     const router = express.Router();
-    router.get('/account', checkAuthenticated, function (req, res) {
-        res.render("user/account", {csrfToken: req.csrfToken()});
+    router.get('/account', checkAuthenticated, async function (req, res) {
+
+        const user = req.user as User;
+        const scenes = await config.dataSource.getRepository(Scene)
+            .createQueryBuilder("scene")
+            .select([
+                "scene.id",
+                "scene.title",
+                "scene.gifId",
+                "scene.creatorId"
+            ])
+            .where("scene.creatorId = :id", { id: user.id })
+            .orderBy("scene.id", "DESC")
+            .getMany();
+
+        res.render("user/account", {scenes, moment, UserPremission, csrfToken: req.csrfToken()});
     });
 
     router.get('/user/:username', async function (req, res) {

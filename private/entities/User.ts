@@ -7,6 +7,7 @@ import { ApiUserToken } from "./ApiUserToken";
 export enum UserPremission {
     VISITOR = 5,
     TRUSTED = 10,
+    DONOR = 15,
     MODERATOR = 80,
     ADMINISTRATOR = 90,
     OWNER = 100,
@@ -32,20 +33,23 @@ export class User extends BaseEntity {
     @Column({default: false, select: false})
     confirmed: boolean;
 
+    @CreateDateColumn()
+    created: Date;
+    
+    @Column({type: "integer", default: 0, select: false})
+    likes: number;
+    
+    @Column({type: "integer", default: 0, select: false})
+    dislikes: number;
+    
+    @Column({type: "integer", default: 0, select: false})
+    score: number;
+    
     @Column({type: "enum", enum: UserPremission, default: UserPremission.VISITOR})
     permission: number;
 
-    @CreateDateColumn({select: false})
-    created: Date;
-
-    @Column({type: "integer", default: 0, select: false})
-    likes: number;
-
-    @Column({type: "integer", default: 0, select: false})
-    dislikes: number;
-
-    @Column({type: "integer", default: 0, select: false})
-    score: number;
+    @Column({default: false})
+    view_unapproved: boolean;
 
     @OneToMany(() => Scene, scene => scene.creator)
     scenes: Scene[]
