@@ -1,17 +1,55 @@
-<div class="title">
-    <h1>Profile of <%= locals.user2.username %></h1>
-    <div>Joined: <%= locals.moment(new Date(locals.user2.created)).format('Do MMMM, YYYY') %></div>
-    <div>Permission Level: <%= locals.UserPremission[locals.user2.permission].toLowerCase() %></div>
+<div class="profile-banner">
+    <div class="profile-picture-wrapper">
+        <img class="profile-picture">
+    </div>
+    <div class="profile-info">
+        <h1><%= locals.user2.username %></h1>
+        <div>Joined: <%= locals.moment(new Date(locals.user2.created)).format('Do MMMM, YYYY') %></div>
+        <div>Permission Level: <%= locals.UserPremission[locals.user2.permission].toLowerCase() %></div>
+        <p>Bio: Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto harum molestiae itaque officiis sit quibusdam, omnis consequuntur! Ex alias eum iste molestiae tempore, nisi praesentium ipsam mollitia, officiis natus nam.</p>
+    </div>
 </div>
-<div class="gallery" token="<%= csrfToken %>">
-    <% for (let i = 0; i < locals.user2.scenes.length; i++) { %>
-    <a class="scene" href="/scene/<%= locals.user2.scenes[i].id %>">
-        <img class="scene-gif tenor-load" src="" gif-id="<%= locals.user2.scenes[i].gifId %>" alt=" ">
-        <h3 class="scene-title"><%= locals.user2.scenes[i].title %></h3>
-    </a>
-    <% } %>
-</div>
+<div class="tabs-wrapper">
+    <div class="tabs-header">
+        <div class="tab-spacer"></div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <input type="radio" name="tab" id="tab1" class="tab-button" checked>
+        <label for="tab1" class="tab-label">My Scenes</label>
+        <div class="tab-content">
+            <div class="gallery" token="<%= csrfToken %>">
+                <% for (let i = 0; i < locals.user2.scenes.length; i++) { %>
+                <a class="scene" href="/scene/<%= locals.user2.scenes[i].id %>">
+                    <img class="scene-gif tenor-load" src="" gif-id="<%= locals.user2.scenes[i].gifId %>" alt=" ">
+                    <h4 class="scene-title"><%= locals.user2.scenes[i].title %></h4>
+                </a>
+                <% } %>
+            </div>
+        </div>
+
+        <input type="radio" name="tab" id="tab2" class="tab-button">
+        <label for="tab2" class="tab-label">Comments</label>
+        <div class="tab-content">
+            <h2>Comments</h2>
+            <p>Work In Progress</p>
+        </div>
+        <% if (locals.user != undefined && locals.user.id == locals.user2.id) { %>
+        <input type="radio" name="tab" id="tab3" class="tab-button">
+        <label for="tab3" class="tab-label">Settings</label>
+        <div class="tab-content">
+            <h2>Settings</h2>
+            <p>Work In Progress</p>
+        </div>
+        <% if (locals.user.permission >= UserPremission.ADMINISTRATOR) { %>
+        <form action="/admin" method="GET">
+            <button type="submit" class="tab-label">Admin</button>
+        </form>
+        <% } %>
+        <form action="/logout" method="POST">
+            <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
+            <button type="submit" class="tab-label">Log Out</button>
+        </form>
+        <% } %>
+    </div>
+</div>
+<script src="/js/jquery.min.js"></script>
 <script src="/js/userpage.js"></script>
-

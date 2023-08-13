@@ -38,6 +38,7 @@
 .description-wrapper .description .button-wrapper .button {
   text-decoration: none;
   padding: 15px;
+  width: 175px;
   font-family: 'Arial';
   font-size: 22px;
   letter-spacing: -0.5px;
