@@ -1,6 +1,6 @@
 <div class="profile-banner">
     <div class="profile-picture-wrapper">
-        <img class="profile-picture">
+        <img class="profile-picture tenor-load" gif-id="5822550">
     </div>
     <div class="profile-info">
         <h1><%= locals.user2.username %></h1>
@@ -14,7 +14,7 @@
         <div class="tab-spacer"></div>
 
         <input type="radio" name="tab" id="tab1" class="tab-button" checked>
-        <label for="tab1" class="tab-label">My Scenes</label>
+        <label for="tab1" class="tab-label">Scenes</label>
         <div class="tab-content">
             <div class="gallery" token="<%= csrfToken %>">
                 <% for (let i = 0; i < locals.user2.scenes.length; i++) { %>
@@ -23,6 +23,18 @@
                     <h4 class="scene-title"><%= locals.user2.scenes[i].title %></h4>
                 </a>
                 <% } %>
+                <div class="scene placeholder"></div>
+                <div class="scene placeholder"></div>
+                <div class="scene placeholder"></div>
+                <div class="scene placeholder"></div>
+                <div class="scene placeholder"></div>
+                <div class="scene placeholder"></div>
+                <div class="scene placeholder"></div>
+                <div class="scene placeholder"></div>
+                <div class="scene placeholder"></div>
+                <div class="scene placeholder"></div>
+                <div class="scene placeholder"></div>
+                <div class="scene placeholder"></div>
             </div>
         </div>
 
@@ -39,15 +51,15 @@
             <h2>Settings</h2>
             <p>Work In Progress</p>
         </div>
+        <form action="/logout" method="POST">
+            <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
+            <button type="submit" class="tab-label">Log Out</button>
+        </form>
         <% if (locals.user.permission >= UserPremission.ADMINISTRATOR) { %>
         <form action="/admin" method="GET">
             <button type="submit" class="tab-label">Admin</button>
         </form>
         <% } %>
-        <form action="/logout" method="POST">
-            <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
-            <button type="submit" class="tab-label">Log Out</button>
-        </form>
         <% } %>
     </div>
 </div>
