@@ -4,8 +4,9 @@ import { User } from "./User";
 import { Badge } from "./Badges";
 
 export enum SceneStatus {
-    AWAITING_APPROVAL = 20,
-    PUBLIC = 30,
+    HIDDEN = 10, //only admins can see it
+    AWAITING_APPROVAL = 20, //only users with "view scenes awaiting approval" enabled
+    PUBLIC = 30, //everyone can see
 }
 
 @Entity('scenes')

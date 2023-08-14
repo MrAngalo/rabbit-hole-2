@@ -78,7 +78,6 @@
     overflow-y: scroll;
 }
 
-/* Show tab content when corresponding label is clicked */
 .tab-button:checked + .tab-label {
     height: 45px;
     background: #b6cec0;
@@ -89,9 +88,6 @@
     display: block;
 }
 
-.title {
-    padding-bottom: 50px;
-}
 .gallery {
     display: flex;
     flex-wrap: wrap;

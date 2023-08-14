@@ -18,8 +18,7 @@
                     <input type="number" id="id" name="id" min="0"
                         value="<%= (locals.scene) ? locals.scene.id : 0 %>"
                         max="<%= locals.static.last_id || 0 %>"
-                        oninput="value=Math.min(Math.max(value, 0),
-                        parseInt('<%= locals.static.last_id || 0 %>'));">
+                        oninput="value=Math.min(Math.max(value, 0), parseInt('<%= locals.static.last_id || 0 %>'));">
                     <div class="hint">Highest ID is <%= locals.static.last_id || 0 %>!</div>
                 </div>
                 <div>

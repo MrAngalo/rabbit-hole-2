@@ -16,7 +16,6 @@
 <div class="tabs-wrapper">
     <div class="tabs-header">
         <div class="tab-spacer"></div>
-
         <input type="radio" name="tab" id="tab1" class="tab-button" checked>
         <label for="tab1" class="tab-label">Scenes</label>
         <div class="tab-content">
@@ -41,16 +40,9 @@
                 <div class="scene placeholder"></div>
             </div>
         </div>
-
-        <input type="radio" name="tab" id="tab2" class="tab-button">
-        <label for="tab2" class="tab-label">Comments</label>
-        <div class="tab-content">
-            <h2>Comments</h2>
-            <p>Work In Progress</p>
-        </div>
         <% if (locals.user != undefined && locals.user.id == locals.user2.id) { %>
-        <input type="radio" name="tab" id="tab3" class="tab-button">
-        <label for="tab3" class="tab-label">Settings</label>
+        <input type="radio" name="tab" id="tab2" class="tab-button">
+        <label for="tab2" class="tab-label">Settings</label>
         <div class="tab-content">
             <h2>Settings</h2>
             <p>Work In Progress</p>
