@@ -42,6 +42,7 @@ export async function userdataJSON (req:Request, res:Response, config:{dataSourc
         'user.username',
         'user.permission',
         'user.created',
+        'user.ppf_gifId',
         'scenes.id',
         'scenes.title',
         'scenes.gifId',

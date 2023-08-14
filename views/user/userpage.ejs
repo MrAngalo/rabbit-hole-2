@@ -1,6 +1,10 @@
 <div class="profile-banner">
     <div class="profile-picture-wrapper">
-        <img class="profile-picture tenor-load" gif-id="5822550">
+        <% if (locals.user2.ppf_gifId != undefined) { %>
+        <img class="profile-picture tenor-load" gif-id="<%= locals.user2.ppf_gifId %>">
+        <% } else { %>
+        <img class="profile-picture" src="/img/no-gif.png">
+        <% } %>
     </div>
     <div class="profile-info">
         <h1><%= locals.user2.username %></h1>

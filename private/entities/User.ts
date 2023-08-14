@@ -30,6 +30,9 @@ export class User extends BaseEntity {
     @Column({select: false})
     password: string;
 
+    @Column({nullable: true, select: false})
+    ppf_gifId: number;
+
     @Column({default: false, select: false})
     confirmed: boolean;
 
