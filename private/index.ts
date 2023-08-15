@@ -34,6 +34,8 @@ import { initTenor, validateTenor } from './config/tenor-utils';
 import { closeTransporter, initTransporter } from './config/mailer';
 import { checkApiKey } from './routes/api/apiMiddleware'
 import { apiAuthRouter } from './routes/api/apiAuthRouter';
+import { checkAuthenticatedAdmin } from './routes/admin/adminMiddleware';
+import { adminModifyRouter } from './routes/admin/adminModifyRouter';
 
 async function mainApp() {
   
@@ -195,7 +197,7 @@ async function mainApp() {
   //load default values to locals
   app.use(configLocals());
 
-  //routers
+  //routes
   const pages = express.Router();
   pages.use(homeRouter());
   pages.use(guidelineRouter());
@@ -208,7 +210,13 @@ async function mainApp() {
   pages.use(tenorRouter({ Tenor }));
   app.use(pages);
 
-  //api
+  //admin routes
+  const admin = express.Router();
+  admin.use(checkAuthenticatedAdmin);
+  admin.use(adminModifyRouter({ dataSource }));
+  app.use('/admin', admin);
+
+  //api routes
   const api = express.Router();
   api.use(checkApiKey({ dataSource })); //middleware that checks the validity of api keys
   api.use(apiGuidelinesRouter());
@@ -216,7 +224,7 @@ async function mainApp() {
   api.use(apiSceneRouter({ dataSource }));
   api.use(apiTenorRouter({ Tenor }));
   api.use(apiUserRouter({ dataSource }));
-  app.use(api);
+  app.use('/api', api);
 
   //handle errors
   app.use(handleErrors);

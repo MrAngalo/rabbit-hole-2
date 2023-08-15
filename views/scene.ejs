@@ -110,7 +110,7 @@
     </div>
   </div>
 </div>
-<% if (locals.user) { %>
+<% if (locals.user != undefined && locals.user.permission >= UserPremission.ADMINISTRATOR) { %>
 <div class="tabs-wrapper">
   <div class="tabs-header">
       <div class="tab-spacer"></div>
@@ -118,17 +118,18 @@
       <label for="tab1" class="tab-label">Admin</label>
       <div class="tab-content">
         <h2>Change Scene Status</h2>
-        <form>
+        <form action="/admin/modify/scene/<%= locals.scene.id %>" method="POST">
+          <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
           <label for="status">Select from the dropdown:</label>
-          <select id="status" name="dropdown">
-            <option value="locals.scene.status" selected><%= locals.SceneStatus[locals.scene.status] %></option>
+          <select id="status" name="status">
+            <% let sceneEnum = locals.SceneStatus[locals.scene.status]; %>
+            <option value="<%= sceneEnum %>" selected><%= sceneEnum %></option>
             <% for (const [name, value] of Object.entries(locals.SceneStatus)) { %>
-            <% if (locals.scene.status != value) { %>
-            <option value="<%= value %>"><%= name %></option>
+            <% if (isNaN(name) && sceneEnum != name) { %>
+            <option value="<%= name %>"><%= name %></option>
             <% } %>
             <% } %>
-          </select>
-          <br>
+          </select><br>
           <button type="submit">Save</button>
         </form>
       </div>

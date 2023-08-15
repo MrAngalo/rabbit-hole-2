@@ -23,10 +23,10 @@ export async function rateSceneJSON(req: Request, res: Response, config: {dataSo
     const user = req.user as User;
 
     if (!Scene.exists(sceneId))
-        return { code: 400, error: `Warning: Scene id=${sceneId} does not exist or has been removed`, redirect: '/' };
+        return { code: 400, error: `Scene id=${sceneId} does not exist or has been removed`, redirect: '/' };
 
     if (rating == undefined)
-        return { code: 400, error: 'Warning: Rating type must be positive or negative!', redirect: `/scene/${sceneId}` };
+        return { code: 400, error: 'Rating type must be positive or negative!', redirect: `/scene/${sceneId}` };
 
     //beginning of the day
     let today = new Date();
@@ -61,7 +61,7 @@ export async function rateSceneJSON(req: Request, res: Response, config: {dataSo
     const remaining_ratings = max_ratings - current_ratings;
 
     if (ratedScenes[sceneId] != undefined)
-        return { code: 400, error: `Warning: Your vote is already counted for scene id=${sceneId}! Remaining daily ratings: ${remaining_ratings}!`, redirect: `/scene/${sceneId}`};
+        return { code: 400, error: `Your vote is already counted for scene id=${sceneId}! Remaining daily ratings: ${remaining_ratings}!`, redirect: `/scene/${sceneId}`};
 
     if (remaining_ratings <= 0) {
         const tomorrow = new Date();
@@ -71,7 +71,7 @@ export async function rateSceneJSON(req: Request, res: Response, config: {dataSo
         let hrs = Math.floor(min / 60);
         sec -= min*60;
         min -= hrs*60;
-        return { code: 400, error: `Warning: You can only vote ${max_ratings} times per day. Time remaining: ${hrs}h:${min}m:${sec}s!`, redirect: `/scene/${sceneId}`};
+        return { code: 400, error: `You can only vote ${max_ratings} times per day. Time remaining: ${hrs}h:${min}m:${sec}s!`, redirect: `/scene/${sceneId}`};
     }
 
     //this is placed here as the last check to avoid unecessary database calls

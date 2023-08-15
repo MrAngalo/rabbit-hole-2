@@ -63,7 +63,7 @@ export function checkAuthenticated(req:Request, res:Response, next: NextFunction
     if (req.isAuthenticated())
         return next();
 
-    (req.session as any).myinfo = { warn: 'Warning: You must be logged in to do this!' };
+    (req.session as any).myinfo = { warn: 'You must be logged in to do this!' };
     res.redirect('/login');
 }
 

@@ -22,11 +22,11 @@ export function fetchSceneRouter(config:{dataSource: DataSource}) {
         const json = await fetchSceneJSON(req, res, config);
         if (json.code == 400) {
             (req.session as any).myinfo = { error: json.error };
-            res.redirect('/');
+            res.redirect(json.redirect);
             return;
         }
-
         json.response.csrfToken = req.csrfToken();
+        json.response.UserPremission = UserPremission;
         res.render("scene", json.response);
     });
 

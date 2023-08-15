@@ -16,32 +16,32 @@ export function apiAuthRouter(config:{ dataSource: DataSource, passport: Passpor
     
     const router = express.Router();
 
-    router.post('/api/register', async function (req, res) {
+    router.post('/register', async function (req, res) {
         const json = await registerUserJSON(req, res, config);
         res.status(json.code).json(json);
     });
 
-    router.post('/api/verify', async function (req, res) {
+    router.post('/verify', async function (req, res) {
         const json = await requestVerificationEmailJSON(req, res, config);
         res.status(json.code).json(json);
     });
 
-    router.post('/api/pwreset', async function (req, res) {
+    router.post('/pwreset', async function (req, res) {
         const json = await requestPasswordResetEmailJSON(req, res, config);
         res.status(json.code).json(json);
     });
 
-    router.post('/api/pwnew', async function (req, res) {
+    router.post('/pwnew', async function (req, res) {
         const json = await newPasswordJSON(req, res, config);
         res.status(json.code).json(json);
     });
     //uses ApiUserToken system
-    router.post('/api/login', async function (req, res) {
+    router.post('/login', async function (req, res) {
         const json = await apiAuthenticateUserJSON(req, res, config);
         res.status(json.code).json(json);
     });
     //uses ApiUserToken system
-    router.post('/api/logout', checkUserToken(config), async function (req, res) {
+    router.post('/logout', checkUserToken(config), async function (req, res) {
         const json = await apiDeauthenticateUserJSON(req, res, config);
         res.status(json.code).json(json);
     });
