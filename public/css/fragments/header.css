@@ -1,9 +1,11 @@
 .navigation {
   width: 100%;
-  margin: auto;
+  min-width: max-content;
+  height: 100%;
   padding: 5px 0;
   display: flex;
   justify-content: space-between;
+  box-sizing: border-box;
 }
 .navigation .navigation-left {
   width: 200px;

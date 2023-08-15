@@ -1,7 +1,8 @@
 html, body {
   margin: 0;
   height: 100%;
-  overflow: hidden;
+  overflow-x: scroll;
+  overflow-y: hidden;
 }
 .content {
   background: #adc0c5;
@@ -17,7 +18,10 @@ header {
   height: 40px;
 }
 main {
-  padding: 10px 15% 30px;
+  padding-top: 10px;
+  padding-left: 15%;
+  padding-right: 15%;
+  padding-bottom: 30px;
   width: 70%;
   height: calc(100% - 100px);
   overflow-y: auto;
@@ -80,4 +84,11 @@ a:active {
   padding: 10px 0;
   width: 150px;
   float: right;
+}
+@media only screen and (max-width: 600px) {
+  main {
+    padding-left: 2%;
+    padding-right: 2%;
+    width: 96%;
+  }
 }

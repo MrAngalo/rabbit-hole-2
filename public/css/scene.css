@@ -15,12 +15,14 @@
 .description-wrapper {
   overflow: auto;
   margin-bottom: 50px;
+  display: flex;
+  flex-wrap: wrap;
 }
 .description-wrapper > * {
   float: inline-start;
 }
 .description-wrapper .rabbit-gif-wrapper {
-  width: 40%;
+  width: 100%;
   max-width: 300px;
   margin-right: 40px;
 }
