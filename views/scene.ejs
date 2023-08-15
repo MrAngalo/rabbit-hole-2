@@ -110,7 +110,7 @@
     </div>
   </div>
 </div>
-<% if (locals.user != undefined && locals.user.permission >= UserPremission.ADMINISTRATOR) { %>
+<% if (locals.user != undefined && locals.user.permission >= UserPremission.ADMINISTRATOR && locals.scene.id != 0) { %>
 <div class="tabs-wrapper">
   <div class="tabs-header">
       <div class="tab-spacer"></div>
