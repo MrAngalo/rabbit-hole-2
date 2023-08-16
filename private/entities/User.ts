@@ -30,8 +30,8 @@ export class User extends BaseEntity {
     @Column({select: false})
     password: string;
 
-    @Column({nullable: true, select: false})
-    ppf_gifId: number;
+    @Column({type: "varchar", length: 32, nullable: true, select: false})
+    ppf_gifId: string;
 
     @Column({default: false, select: false})
     confirmed: boolean;
@@ -52,7 +52,7 @@ export class User extends BaseEntity {
     permission: number;
 
     @Column({default: false})
-    view_unapproved: boolean;
+    view_await_review: boolean;
 
     @OneToMany(() => Scene, scene => scene.creator)
     scenes: Scene[]

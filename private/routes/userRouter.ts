@@ -28,7 +28,7 @@ export function userRouter(config:{dataSource: DataSource}) {
             csrfToken: req.csrfToken()
         }
 
-        res.render("user/userpage", response);
+        res.render("userpage", response);
     });
 
     return router;

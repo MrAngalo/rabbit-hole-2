@@ -34,8 +34,6 @@ export async function tenorFindJSON(req: Request, res: Response, config: {Tenor:
 }
 
 export async function tenorSearchJSON(req: Request, res: Response, config: {Tenor: any}) : Promise<JSONResponse> {
-    res.type('application/json');
-
     let query:string = req.body.q as string || '';
     let limit:number = parseInt(req.body.limit) || 30;
 

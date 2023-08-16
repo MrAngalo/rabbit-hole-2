@@ -5,7 +5,7 @@ import { Badge } from "./Badges";
 
 export enum SceneStatus {
     HIDDEN = 10, //only admins can see it
-    AWAITING_APPROVAL = 20, //only users with "view scenes awaiting approval" enabled
+    AWAITING_REVIEW = 20, //only users with "view scenes awaiting approval" enabled
     PUBLIC = 30, //everyone can see
 }
 
@@ -44,8 +44,8 @@ export class Scene extends BaseEntity {
     @Column()
     description: string;
     
-    @Column({type: "integer"})
-    gifId: number;
+    @Column({type: "varchar", length: 32})
+    gifId: string;
 
     @CreateDateColumn()
     created: Date;

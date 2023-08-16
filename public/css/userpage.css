@@ -27,7 +27,6 @@
 .profile-info h1 {
     margin-top: 0px;
 }
-
 .tabs-wrapper {
     width: 100%;
     min-width: 500px;
@@ -36,7 +35,6 @@
     overflow: hidden;
     background: #b6cec0;
 }
-
 .tabs-header {
     display: flex;
     position: relative;
@@ -44,15 +42,12 @@
     height: 45px;
     background: #298d4a;
 }
-
 .tab-button {
     display: none;
 }
-
 .tab-spacer {
     width: 30px;
 }
-
 .tab-label {
     cursor: pointer;
     padding: 10px 20px;
@@ -65,30 +60,38 @@
     font-family: inherit;
     font-size: inherit;
 }
-
 .tab-content {
     position: absolute;
     top: 100%;
     padding: 0px 30px;
-    margin-top: 30px;
     width: 100%;
     height: 545px;
     box-sizing: border-box;
     display: none;
     overflow-y: scroll;
 }
-
+.tab-content.settings {
+    width: 50%;
+}
 .tab-button:checked + .tab-label {
     height: 45px;
     background: #b6cec0;
     border-radius: 5px 5px 0px 0px;
 }
-
 .tab-button:checked + .tab-label + .tab-content {
     display: block;
 }
-
+.tab-content button {
+    width: 55px;
+    height: 34px;
+    margin: 1px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    background-color: #799ce6;
+}
 .gallery {
+    margin-top: 30px;
     display: flex;
     flex-wrap: wrap;
     border-radius: 10px;
@@ -123,4 +126,38 @@
 .gallery .scene.placeholder {
     height: 0px;
     margin-bottom: 0px;
+}
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+}
+.checkbox-wrapper input {
+    margin: 0;
+    width: 0;
+    height: 0;
+    display: none;
+}
+.checkbox-wrapper .switch {
+    width: 50px;
+    height: 28px;
+    padding: 4px;
+    box-sizing: border-box;
+    margin-left: 10px;
+    border-radius: 14px;
+    background: gray;
+    transition: 0.3s;
+}
+.checkbox-wrapper .switch div {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    transition: 0.3s;
+}
+.checkbox-wrapper input:checked ~ .switch {
+    background: #298d4a;
+}
+.checkbox-wrapper input:checked ~ .switch div {
+    margin-left: calc(100% - 20px);
 }

@@ -7,10 +7,11 @@ import { authenticateUserJSON } from '../routes/auth/authUserRouter';
 
 export async function initPassport(config:{passport:PassportStatic, dataSource: DataSource}) {
 
+  //this function is the definition of req.user
   async function getUserById(id:any) {
     return config.dataSource.getRepository(User)
     .createQueryBuilder('user')
-    .select(['user', 'user.password'])
+    .select(['user'])
     .where('user.id = :id', { id })
     .getOne();
   }

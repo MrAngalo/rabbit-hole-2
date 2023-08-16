@@ -59,14 +59,17 @@ export async function fetchSceneJSON(req:Request,res:Response, config:{dataSourc
     
     //if the scene is private, only the creator or a moderator can view it
     if (scene.status != SceneStatus.PUBLIC) {
-
         const user = req.user as User;
-        if (user == undefined || (user.id != scene.creator.id && user.permission < UserPremission.MODERATOR)) {
+
+        function IsAllowedToViewScene() : boolean {
+            return user.id == scene.creator?.id
+                || user.permission >= UserPremission.MODERATOR
+                || (user.view_await_review && scene.status == SceneStatus.AWAITING_REVIEW)
+        }
+        
+        if (user == undefined || !IsAllowedToViewScene()) {
             return { code: 400, error: `The scene id=${id} is not open to the public yet!`, redirect: '/'};
         }
-
-
-
     }
 
     scene.children.sort((a, b) => {

@@ -14,6 +14,7 @@ import { authUserRouter } from './routes/auth/authUserRouter';
 import { authMailerRouter } from './routes/auth/authMailerRouter';
 import { userRouter } from './routes/userRouter';
 import { fetchSceneRouter } from './routes/scene/fetchScene';
+import { modifyRouter } from './routes/modifyRouter';
 import { tenorRouter } from './routes/tenorRouter';
 import {apiGuidelinesRouter} from './routes/api/apiGuidelinesRouter';
 import {apiUserRouter} from './routes/api/apiUserRouter';
@@ -207,6 +208,7 @@ async function mainApp() {
   pages.use(rateSceneRouter({ dataSource }))
   pages.use(createSceneRouter({ dataSource }));
   pages.use(userRouter({ dataSource }));
+  pages.use(modifyRouter({ dataSource }));
   pages.use(tenorRouter({ Tenor }));
   app.use(pages);
 

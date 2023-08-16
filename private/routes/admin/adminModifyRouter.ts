@@ -8,14 +8,14 @@ export function adminModifyRouter(config:{dataSource: DataSource}) {
     const router = express.Router();
 
     router.post('/modify/scene/:id(\\d+)', redirectJSON({
-        logic: (req, res) => rateSceneJSON(req, res, config),
+        logic: (req, res) => adminModifySceneJSON(req, res, config),
         displaySuccessInfo: true
     }));
 
     return router;
 }
 
-export async function rateSceneJSON(req: Request, res: Response, config: {dataSource: DataSource}) : Promise<JSONResponse> {
+export async function adminModifySceneJSON(req: Request, res: Response, config: {dataSource: DataSource}) : Promise<JSONResponse> {
     const sceneId:number = parseInt(req.params.id);
     const status = SceneStatus[req.body.status.toUpperCase() as keyof typeof SceneStatus];
 

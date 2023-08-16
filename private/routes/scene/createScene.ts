@@ -74,7 +74,7 @@ export async function createSceneJSON(req: Request, res: Response, config: { dat
     .replace(/[ ]{2,}/g, ' ')
     .replace(/[\r\n\t\f\v]+/g, '\\n');
     
-  const gifId:number|undefined = req.body.gifId
+  const gifId:string|undefined = req.body.gifId
   
   const user = req.user as User;
   const parent = await config.dataSource.getRepository(Scene)
@@ -111,7 +111,7 @@ export async function createSceneJSON(req: Request, res: Response, config: { dat
     return { code: 400, error: `Tenor GIF ID is invalid!`, redirect: `/create/${parent.id}/`}
 
   //if the user is trusted, their scene is public immediately
-  const status = (user.permission >= UserPremission.TRUSTED) ? SceneStatus.PUBLIC : SceneStatus.AWAITING_APPROVAL;
+  const status = (user.permission >= UserPremission.TRUSTED) ? SceneStatus.PUBLIC : SceneStatus.AWAITING_REVIEW;
 
   const scene = Scene.create({
     parent: parent,
@@ -119,7 +119,7 @@ export async function createSceneJSON(req: Request, res: Response, config: { dat
     creator_name: user.username,
     title: title as string,
     description: description as string,
-    gifId: gifId as number,
+    gifId: gifId,
     status: status,
   });
 
@@ -127,7 +127,7 @@ export async function createSceneJSON(req: Request, res: Response, config: { dat
   Scene.addRelationToCache(scene.id, parent.id);
 
   //this is going to be around 90% of the cases because of new users
-  if (status == SceneStatus.AWAITING_APPROVAL) {
+  if (status == SceneStatus.AWAITING_REVIEW) {
     //TODO, send email to admins to notify scene requires validation
 
   }

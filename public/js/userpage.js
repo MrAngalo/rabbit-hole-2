@@ -48,3 +48,28 @@ jQuery(function() {
         }
     });
 });
+
+jQuery(function() {
+
+    $('.save-form').on("submit", (event) => {
+        event.preventDefault();
+
+        const form = event.target; /* HTMLFormElement */
+
+        const xhr = new XMLHttpRequest();
+        xhr.open(form.method, form.action, true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+
+        xhr.onreadystatechange = () => { // Call a function when the state changes
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                // var response = JSON.parse(xhr.response);
+                console.log(xhr.response);
+            }
+        }
+        let data = [];
+        for (const pair of new FormData(form)) {
+            data.push(`${pair[0]}=${pair[1]}`);
+        }
+        xhr.send(data.join('&'));
+    });
+});

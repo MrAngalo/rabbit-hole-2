@@ -123,10 +123,10 @@
           <label for="status">Select from the dropdown:</label>
           <select id="status" name="status">
             <% let sceneEnum = locals.SceneStatus[locals.scene.status]; %>
-            <option value="<%= sceneEnum %>" selected><%= sceneEnum %></option>
+            <!-- <option value="<%= sceneEnum %>" selected><%= sceneEnum %></option> -->
             <% for (const [name, value] of Object.entries(locals.SceneStatus)) { %>
-            <% if (isNaN(name) && sceneEnum != name) { %>
-            <option value="<%= name %>"><%= name %></option>
+            <% if (isNaN(name)) { %>
+            <option value="<%= name %>" <%= (sceneEnum == name) ? "selected" : "" %>><%= name %></option>
             <% } %>
             <% } %>
           </select><br>

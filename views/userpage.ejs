@@ -16,6 +16,7 @@
 <div class="tabs-wrapper">
     <div class="tabs-header">
         <div class="tab-spacer"></div>
+        <!-- Scenes Tab -->
         <input type="radio" name="tab" id="tab1" class="tab-button" checked>
         <label for="tab1" class="tab-label">Scenes</label>
         <div class="tab-content">
@@ -26,31 +27,43 @@
                     <h4 class="scene-title"><%= locals.user2.scenes[i].title %></h4>
                 </a>
                 <% } %>
+                <% for (let i = 0; i < 12; i++) { %>
                 <div class="scene placeholder"></div>
-                <div class="scene placeholder"></div>
-                <div class="scene placeholder"></div>
-                <div class="scene placeholder"></div>
-                <div class="scene placeholder"></div>
-                <div class="scene placeholder"></div>
-                <div class="scene placeholder"></div>
-                <div class="scene placeholder"></div>
-                <div class="scene placeholder"></div>
-                <div class="scene placeholder"></div>
-                <div class="scene placeholder"></div>
-                <div class="scene placeholder"></div>
+                <% } %>
             </div>
         </div>
+        <!-- Settings Tab -->
         <% if (locals.user != undefined && locals.user.id == locals.user2.id) { %>
         <input type="radio" name="tab" id="tab2" class="tab-button">
         <label for="tab2" class="tab-label">Settings</label>
-        <div class="tab-content">
+        <div class="tab-content settings">
             <h2>Settings</h2>
-            <p>Work In Progress</p>
+            <form class="save-form" action="/modify/usersettings/<%= locals.user.username %>" method="POST">
+                <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
+                
+                <label class="checkbox-wrapper" for="viewarev">
+                    <h4>View "Awaiting Review" Scenes</h4>
+                    <input type="checkbox" id="viewarev" name="viewarev" value="1" <%= (locals.user.view_await_review) ? "checked" : "" %>>
+                    <div class="switch"><div></div></div>
+                </label>
+                <div>
+                    This setting allows you to view new user's scenes that have not
+                    yet been approved by a moderator and released to the public. The
+                    content of these scenes is unknown and may not be suitable for
+                    all audiences. Please proceed with caution and be on the lookout
+                    for any <a href="/guidelines" target="_blank">Community Guidelines</a>
+                    violations.
+                </div>
+                <br>
+                <button type="submit">Save</button>
+            </form>
         </div>
+        <!-- Log Out Action -->
         <form action="/logout" method="POST">
             <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
             <button type="submit" class="tab-label">Log Out</button>
         </form>
+        <!-- Go To Admin Panel -->
         <% if (locals.user.permission >= UserPremission.ADMINISTRATOR) { %>
         <form action="/admin" method="GET">
             <button type="submit" class="tab-label">Admin</button>
