@@ -34,6 +34,7 @@
     width: 100%;
     min-width: 500px;
     height: 600px;
+    min-height: calc(100vh - 400px);
     border-radius: 10px;
     overflow: hidden;
     background: #a8c6b4;
@@ -74,6 +75,7 @@
     padding: 0px 30px;
     width: 100%;
     height: 545px;
+    min-height: calc(100vh - 455px);
     box-sizing: border-box;
     display: none;
     overflow-y: scroll;

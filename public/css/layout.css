@@ -23,10 +23,10 @@ header {
 
 main {
   padding-top: 10px;
-  padding-left: 15%;
-  padding-right: 15%;
+  padding-left: 10%;
+  padding-right: 10%;
   padding-bottom: 30px;
-  width: 70%;
+  width: 80%;
   height: calc(100% - 100px);
   overflow-y: auto;
 }
