@@ -20,15 +20,9 @@ export function userRouter(config:{dataSource: DataSource}) {
             res.redirect(`/`);
             return; 
         }
-        //the variable user is dedicated for current logged on sessions
-        //renaming to user2
-        let response = {
-            user2: json.response.user,
-            UserPremission,
-            csrfToken: req.csrfToken()
-        }
-
-        res.render("userpage", response);
+        json.response.UserPremission = UserPremission;
+        json.response.csrfToken = req.csrfToken();
+        res.render("userpage", json.response);
     });
 
     return router;
@@ -42,19 +36,16 @@ export async function userdataJSON (req:Request, res:Response, config:{dataSourc
         'user.username',
         'user.permission',
         'user.created',
+        'user.bio',
         'user.ppf_gifId',
         'scenes.id',
         'scenes.title',
-        'scenes.gifId',
-        'scenes.created',
-        'scenes.likes',
-        'scenes.dislikes',
+        'scenes.gifId'
     ];
     if (user != undefined && username == user.username.toLowerCase()) {
-        //TODO use this to get information about the settings tab
-        // properties.concat([
-        //     '',
-        // ]);
+        properties.push(
+            'user.view_await_review',
+        );
     }
 
     const user2 = await config.dataSource.getRepository(User)
@@ -68,5 +59,5 @@ export async function userdataJSON (req:Request, res:Response, config:{dataSourc
     if (user2 == null) {
         return {code: 400, error: `The user "${username}" does not exist or was removed!`, redirect: '/' };
     }
-    return {code: 200, info: 'Success', response: { user: user2 }, redirect: `/user/${username}` }
+    return {code: 200, info: 'Success', response: { user2 }, redirect: `/user/${username}` }
 }

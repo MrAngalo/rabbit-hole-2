@@ -1,51 +1,62 @@
 .title {
   padding: 10px;
 }
+
 .title .heading {
   width: fit-content;
   position: relative;
 }
+
 .title .heading .badge-wrapper {
   position: absolute;
   bottom: 0;
   left: 100%;
   display: flex;
-  margin-left:15px;
+  margin-left: 15px;
 }
+
 .description-wrapper {
   overflow: auto;
   margin-bottom: 50px;
   display: flex;
   flex-wrap: wrap;
 }
-.description-wrapper > * {
+
+.description-wrapper>* {
   float: inline-start;
 }
+
 .description-wrapper .rabbit-gif-wrapper {
   width: 100%;
   max-width: 300px;
   margin-right: 40px;
 }
+
 .description-wrapper .rabbit-gif-wrapper .rabbit-gif {
   width: 100%;
   border-radius: 10px;
   border: 2px solid black;
 }
+
 .description-wrapper .description {
   width: 100%;
   max-width: 600px;
   font-size: 20px;
 }
+
 .description-wrapper .description .choice-wrapper {
   width: fit-content;
 }
+
 .description-wrapper .description .choice-wrapper .choice {
   position: relative;
   display: block;
 }
+
 .description-wrapper .description .choice-wrapper .choice a {
   text-decoration: none;
 }
+
 .description-wrapper .description .choice-wrapper .choice .button {
   padding: 15px;
   font-family: 'Arial';
@@ -55,9 +66,11 @@
   border-radius: 10px;
   background: #799ce6;
 }
+
 .description-wrapper .description .choice-wrapper .choice .create {
   background: #9179e6;
 }
+
 .description-wrapper .description .choice-wrapper .choice .child-attributes {
   position: absolute;
   height: 30px;
@@ -67,35 +80,43 @@
   padding-left: 20px;
   display: flex;
 }
+
 .description-wrapper .description .choice-wrapper .choice .child-attributes .child-rating-wrapper {
-  display:flex;
+  display: flex;
 }
+
 .description-wrapper .description .choice-wrapper .choice .child-attributes .child-rating-wrapper .child-rating {
   padding: 5px 15px;
   margin-right: 5px;
   border-radius: 5px;
 }
-.description-wrapper .description .choice-wrapper .choice .child-attributes .child-badge-wrapper{
+
+.description-wrapper .description .choice-wrapper .choice .child-attributes .child-badge-wrapper {
   display: flex;
 }
+
 .description-wrapper .description .rating-container .rating-option {
   width: fit-content;
   display: flex;
 }
+
 .description-wrapper .description .rating-container .rating-option button {
   width: 50px;
   height: 40px;
   margin-right: 10px;
 }
+
 .description-wrapper .description .rating-container .rating-option button img {
   width: auto;
 }
+
 .badge {
   position: relative;
   margin-right: 5px;
   cursor: auto;
   font: initial;
 }
+
 .badge .badge-hint {
   position: absolute;
   top: 100%;
@@ -112,26 +133,30 @@
   padding: 0;
   z-index: 1;
 }
-.badge .icon:hover ~ .badge-hint {
+
+.badge .icon:hover~.badge-hint {
   min-width: 200px;
   width: auto;
   height: auto;
   padding: 10px;
   opacity: 1;
 }
+
 .badge .badge-hint .badge-name {
   margin-top: 0;
-  margin-bottom:10px;
+  margin-bottom: 10px;
   width: max-content;
 }
+
 .tabs-wrapper {
   width: 100%;
   min-width: 500px;
   height: 600px;
   border-radius: 10px;
   overflow: hidden;
-  background: #b6cec0;
+  background: #a8c6b4;
 }
+
 .tabs-header {
   display: flex;
   position: relative;
@@ -139,12 +164,15 @@
   height: 45px;
   background: #298d4a;
 }
+
 .tab-button {
   display: none;
 }
+
 .tab-spacer {
   width: 30px;
 }
+
 .tab-label {
   cursor: pointer;
   padding: 10px 20px;
@@ -157,6 +185,7 @@
   font-family: inherit;
   font-size: inherit;
 }
+
 .tab-content {
   position: absolute;
   top: 100%;
@@ -168,17 +197,21 @@
   display: none;
   overflow-y: scroll;
 }
-.tab-button:checked + .tab-label {
+
+.tab-button:checked+.tab-label {
   height: 45px;
-  background: #b6cec0;
+  background: #a8c6b4;
   border-radius: 5px 5px 0px 0px;
 }
-.tab-button:checked + .tab-label + .tab-content {
+
+.tab-button:checked+.tab-label+.tab-content {
   display: block;
 }
+
 .tab-content label {
   display: block;
 }
+
 .tab-content select {
   width: 200px;
   height: 36px;
@@ -188,6 +221,7 @@
   border-radius: 4px;
   box-sizing: border-box;
 }
+
 .tab-content button {
   width: 55px;
   height: 34px;
@@ -197,4 +231,3 @@
   cursor: pointer;
   background-color: #799ce6;
 }
-

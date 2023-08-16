@@ -1,16 +1,18 @@
 <div class="profile-banner">
     <div class="profile-picture-wrapper">
         <% if (locals.user2.ppf_gifId != undefined) { %>
-        <img class="profile-picture tenor-load" gif-id="<%= locals.user2.ppf_gifId %>">
+        <img class="profile-picture rabbit-gif preview-gif tenor-load" gif-id="<%= locals.user2.ppf_gifId %>">
         <% } else { %>
-        <img class="profile-picture" src="/img/no-gif.png">
+        <img class="profile-picture rabbit-gif preview-gif" src="/img/no-gif.png">
         <% } %>
     </div>
     <div class="profile-info">
         <h1><%= locals.user2.username %></h1>
         <div>Joined: <%= locals.moment(new Date(locals.user2.created)).format('Do MMMM, YYYY') %></div>
         <div>Permission Level: <%= locals.UserPremission[locals.user2.permission].toLowerCase() %></div>
-        <p>Bio: Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto harum molestiae itaque officiis sit quibusdam, omnis consequuntur! Ex alias eum iste molestiae tempore, nisi praesentium ipsam mollitia, officiis natus nam.</p>
+        <% if (locals.user2.bio != undefined) { %>
+        <p>Bio: <%= locals.user2.bio %></p>
+        <% } %>
     </div>
 </div>
 <div class="tabs-wrapper">
@@ -33,17 +35,49 @@
             </div>
         </div>
         <!-- Settings Tab -->
-        <% if (locals.user != undefined && locals.user.id == locals.user2.id) { %>
+        <% if (locals.user != undefined && locals.user2.id == locals.user2.id) { %>
         <input type="radio" name="tab" id="tab2" class="tab-button">
         <label for="tab2" class="tab-label">Settings</label>
         <div class="tab-content settings">
-            <h2>Settings</h2>
-            <form class="save-form" action="/modify/usersettings/<%= locals.user.username %>" method="POST">
+            <form class="save-form" action="/modify/usersettings/<%= locals.user2.username %>" method="POST">
+                <h2>Settings</h2>
+                <div>
+                The following are your account setings. They are subjected to the
+                <a href="/guidelines" target="_blank">Community Guidelines</a>.
+                </div><br>
                 <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
-                
+                <h4>Profile Picture Gif:</h4>
+                <div class="tenor-selector-wrapper">
+                    <div class="tenor-selector">
+                        <div class="flex">
+                            <input id="tenor-search"type="text" placeholder="Search Tenor" class="text" token="<%= csrfToken %>">
+                            <button type="button">Search</button>
+                        </div>
+                        <div class="searched_content"></div>
+                    </div>
+                    <img class="tenor-footer" src="/img/tenor/PB_tenor_logo_blue_horizontal.svg" alt="Tenor Footer">
+                    <div class="rabbit-gif-wrapper">
+                        <img class="profile-picture rabbit-gif preview-gif" src="/img/no-gif.png" alt="Rabbit Gif">
+                        <img class="tenor-footer" src="/img/tenor/PB_tenor_logo_blue_horizontal.svg" alt="Tenor Footer">
+                    </div>
+                </div>
+                <div>
+                Cannot find your GIF? enter the ID bellow directly. It is the numbers at the end of the URL.
+                Ex. (https://tenor.com/view/bruh-moment-gif-<span style="color:rgb(201, 0, 0)">23616422</span>)
+                </div><br>
+                <div>
+                    <label for="gifId"><b>Gif id:</b></label>
+                    <input type="text" id="gifId" name="gifId" placeholder="23616422" token="<%= csrfToken %>" value="<%= locals.user2.ppf_gifId %>" required>
+                    <button type="button" onclick="$('#gifId').val('<%= locals.user2.ppf_gifId %>').trigger('keyup')">Reset Gif</button>
+                </div>
+                <div>
+                    <h4>Biography:</h4>
+                    <textarea id="bio" name="bio" placeholder="Enter something curious about you without revealing personal information" maxlength="400"><%= locals.user2.bio %></textarea><br>
+                </div>
+                <div>400 max characters</div>
                 <label class="checkbox-wrapper" for="viewarev">
                     <h4>View "Awaiting Review" Scenes</h4>
-                    <input type="checkbox" id="viewarev" name="viewarev" value="1" <%= (locals.user.view_await_review) ? "checked" : "" %>>
+                    <input type="checkbox" id="viewarev" name="viewarev" value="1" <%= (locals.user2.view_await_review) ? "checked" : "" %>>
                     <div class="switch"><div></div></div>
                 </label>
                 <div>
@@ -53,9 +87,11 @@
                     all audiences. Please proceed with caution and be on the lookout
                     for any <a href="/guidelines" target="_blank">Community Guidelines</a>
                     violations.
-                </div>
+                </div><br>
+                <button type="submit">Save Settings</button>
+                <button type="reset">Reset Settings</button>
                 <br>
-                <button type="submit">Save</button>
+                <br>
             </form>
         </div>
         <!-- Log Out Action -->
@@ -64,7 +100,7 @@
             <button type="submit" class="tab-label">Log Out</button>
         </form>
         <!-- Go To Admin Panel -->
-        <% if (locals.user.permission >= UserPremission.ADMINISTRATOR) { %>
+        <% if (locals.user2.permission >= UserPremission.ADMINISTRATOR) { %>
         <form action="/admin" method="GET">
             <button type="submit" class="tab-label">Admin</button>
         </form>

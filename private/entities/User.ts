@@ -30,9 +30,6 @@ export class User extends BaseEntity {
     @Column({select: false})
     password: string;
 
-    @Column({type: "varchar", length: 32, nullable: true, select: false})
-    ppf_gifId: string;
-
     @Column({default: false, select: false})
     confirmed: boolean;
 
@@ -51,7 +48,13 @@ export class User extends BaseEntity {
     @Column({type: "enum", enum: UserPremission, default: UserPremission.VISITOR})
     permission: number;
 
-    @Column({default: false})
+    @Column({type: "varchar", length: 32, nullable: true, select: false})
+    ppf_gifId: string;
+
+    @Column({type: "varchar", length: 400, nullable: true, select: false})
+    bio: string;
+
+    @Column({default: false, select: false})
     view_await_review: boolean;
 
     @OneToMany(() => Scene, scene => scene.creator)

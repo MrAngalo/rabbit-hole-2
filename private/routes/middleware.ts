@@ -13,11 +13,13 @@ export function configLocals() {
         
         res.render = function (view, options?, fn?) {
             // res.locals.filename = view.split('\\').pop()?.split('/').pop();
-            res.locals.user = req.user;
             res.locals.moment = moment;
             res.locals.myinfo = (req.session as any).myinfo || req.flash();
             res.locals.fields = (req.session as any).fields || {};
-
+            
+            if (res.locals.user == undefined)
+                res.locals.user = req.user;
+            
             if (res.locals.css == undefined)
                 res.locals.css = [view]; 
 

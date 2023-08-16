@@ -11,6 +11,7 @@ p {
   max-width: 800px;
   padding-bottom: 30px;
 }
+
 .disclaimer .button {
   width: 200px;
   height: 50px;
@@ -21,51 +22,63 @@ p {
   overflow: auto;
   margin-bottom: 50px;
 }
-.description-wrapper > * {
+
+.description-wrapper>* {
   float: inline-start;
 }
+
 .description-wrapper .rabbit-gif-wrapper {
   width: 40%;
   max-width: 300px;
   margin-right: 40px;
 }
+
 .description-wrapper .rabbit-gif-wrapper .rabbit-gif {
   width: 100%;
   border-radius: 10px;
   border: 2px solid black;
 }
+
 .description-wrapper .description {
   max-width: 60%;
 }
+
 .description-wrapper .description button {
   padding: 15px;
   font-size: 22px;
   border-radius: 10px;
   background: #799ce6;
 }
+
 .description-wrapper .description .input-wrapper {
   overflow: auto;
 }
-.description-wrapper .description .input-wrapper > * {
+
+.description-wrapper .description .input-wrapper>* {
   height: fit-content;
   display: block;
   float: left;
   padding-right: 10px;
 }
+
 .description-wrapper .description .input-wrapper label {
   width: 5%;
   min-width: fit-content;
 }
-.description-wrapper .description .input-wrapper input, .description-wrapper .description .input-wrapper textarea {
+
+.description-wrapper .description .input-wrapper input,
+.description-wrapper .description .input-wrapper textarea {
   width: 60%;
   padding: 10px;
   border-radius: 10px;
   margin-bottom: 30px;
 }
+
 .description-wrapper .description .input-wrapper textarea {
   min-height: 500px;
   max-width: 90%;
 }
+
 .description-wrapper .description .tos-wrapper {
   padding: 20px 0;
 }
@@ -80,6 +93,7 @@ p {
   margin-top: 30px;
   margin-bottom: 30px;
 }
+
 .tenor-selector .text {
   border: none;
   outline: none;
@@ -88,9 +102,11 @@ p {
   width: 100%;
   border-radius: 10px 0 0 10px;
 }
+
 .tenor-selector .flex {
   display: flex;
 }
+
 .tenor-selector button {
   border: none;
   outline: none;
@@ -99,6 +115,7 @@ p {
   color: white;
   border-radius: 0px 10px 10px 0;
 }
+
 .tenor-selector .searched_content {
   width: 100%;
   display: flex;
@@ -108,6 +125,7 @@ p {
   max-height: 50vh;
   overflow-y: auto;
 }
+
 .tenor-selector .pic {
   width: 100px;
   height: 100px;

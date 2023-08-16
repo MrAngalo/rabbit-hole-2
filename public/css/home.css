@@ -6,23 +6,28 @@
   overflow: auto;
   margin-bottom: 50px;
 }
-.description-wrapper > * {
+
+.description-wrapper>* {
   float: inline-start;
 }
+
 .description-wrapper .rabbit-gif-wrapper {
   width: 40%;
   max-width: 300px;
   margin-right: 40px;
 }
+
 .description-wrapper .rabbit-gif-wrapper .rabbit-gif {
   width: 100%;
   border-radius: 10px;
   border: 2px solid black;
 }
+
 .description-wrapper .description {
   max-width: 60%;
   font-size: 20px;
 }
+
 .description-wrapper .description button {
   padding: 15px;
   font-size: 22px;
@@ -35,6 +40,7 @@
   display: block;
   width: fit-content;
 }
+
 .description-wrapper .description .button-wrapper .button {
   text-decoration: none;
   padding: 15px;
