@@ -65,9 +65,10 @@
     border-radius: 5px;
     background-color: #f2f2f2;
     border: none;
-    color: black;
     font-family: inherit;
     font-size: inherit;
+    color: black;
+    -webkit-text-fill-color: black;
 }
 
 .tab-content {

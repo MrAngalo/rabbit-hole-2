@@ -6,10 +6,8 @@ import { User } from "../entities/User";
 
 export function modifyRouter(config:{dataSource: DataSource}) {
     const router = express.Router();
-
-    router.use(checkAuthenticated);
-
-    router.post('/modify/usersettings/:username', async function (req, res) {
+    
+    router.post('/modify/usersettings/:username', checkAuthenticated, async function (req, res) {
         res.type('application/json');
         const json = await modifyUserSettingsJSON(req, res, config);
         return res.status(json.code).json(json);
