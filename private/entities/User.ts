@@ -54,7 +54,7 @@ export class User extends BaseEntity {
     @Column({type: "varchar", length: 400, nullable: true, select: false})
     bio: string;
 
-    @Column({default: false, select: false})
+    @Column({default: false})
     view_await_review: boolean;
 
     @OneToMany(() => Scene, scene => scene.creator)

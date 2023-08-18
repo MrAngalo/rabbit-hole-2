@@ -42,34 +42,37 @@ export async function fetchSceneJSON(req:Request,res:Response, config:{dataSourc
         .createQueryBuilder('scene')
         .leftJoinAndSelect('scene.creator', 'creator')
         .leftJoinAndSelect('scene.badges', 'badges')
+        .leftJoinAndSelect('scene.parent', 'parent')
         .leftJoinAndSelect('scene.children', 'children')
+        .leftJoinAndSelect('children.creator', 'children_creator')
         .leftJoinAndSelect('children.badges', 'children_badges')
         .select([
             'scene',
+            'badges',
             'creator.id',
+            'parent.id',
+            'parent.status',
             'children.id',
             'children.title',
             'children.likes',
             'children.dislikes',
+            'children.status',
+            'children_creator.id',
             'children_badges',
-            'badges'
         ])
         .where('scene.id = :id', { id })
         .getOne() as Scene; //always exists
     
-    //if the scene is private, only the creator or a moderator can view it
-    if (scene.status != SceneStatus.PUBLIC) {
-        const user = req.user as User;
+    //only calls req.user when it needs
+    let user:User;
+    function userfn() {
+        if (user == undefined) user = req.user as User;
+        return user;
+    }
 
-        function IsAllowedToViewScene() : boolean {
-            return user.id == scene.creator?.id
-                || user.permission >= UserPremission.MODERATOR
-                || (user.view_await_review && scene.status == SceneStatus.AWAITING_REVIEW)
-        }
-        
-        if (user == undefined || !IsAllowedToViewScene()) {
-            return { code: 400, error: `The scene id=${id} is not open to the public yet!`, redirect: '/'};
-        }
+    //if the scene is private, only the creator or a moderator can view it
+    if (!allowedToViewScene(userfn, scene)) {
+        return { code: 400, error: `The scene id=${id} is not open to the public yet!`, redirect: '/'};
     }
 
     scene.children.sort((a, b) => {
@@ -81,13 +84,15 @@ export async function fetchSceneJSON(req:Request,res:Response, config:{dataSourc
         return Math.sign(ratioB - ratioA);
     });
     
+
     //the content of the buttons of each scene
-    let options = [];
     let i = 0;
-    let length = Math.min(scene.children.length, Scene.getMaxChildren())
+    let options = [];
+    let length = Math.min(scene.children.length, Scene.getMaxChildren());
     while(i < length) {
         let child = scene.children[i];
-        options.push({id: child.id, title: child.title});
+        if (allowedToViewScene(userfn, child))
+            options.push({id: child.id, title: child.title});
         i++;
     }
     //a scene can only have children if it is public, no options given
@@ -98,10 +103,22 @@ export async function fetchSceneJSON(req:Request,res:Response, config:{dataSourc
             i++;
         }
     }
-    let parentId = Scene.getParentId(scene.id);
-    if (parentId != null) {
-        //only add return option if scene is not root (should only be scene id=0)
-        options.push({id: parentId, title: "Go Back!"});
+
+    if (scene.parent != null) {
+        //only add return option if scene is not root
+        if (allowedToViewScene(userfn, scene.parent))
+            options.push({id: scene.parent.id, title: "Go Back!"});
     }
     return { code: 200, info: 'Success', response: { scene, options, SceneStatus }, redirect: `/scene/${id}`};
+}
+
+function allowedToViewScene(userfn: () => User, scene: Scene) : boolean {
+    if (scene.status == SceneStatus.PUBLIC) return true; //escape if scene is public
+
+    const user = userfn();
+    if (user == undefined) return false; //escape if user is logged off
+
+    return user.id == scene.creator?.id //user created the scene
+        || user.permission >= UserPremission.MODERATOR //user is a moderator or higher
+        || user.view_await_review && scene.status == SceneStatus.AWAITING_REVIEW; //user can view await review scenes
 }
