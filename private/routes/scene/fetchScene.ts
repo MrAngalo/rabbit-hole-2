@@ -2,7 +2,7 @@ import express from "express";
 import { DataSource } from "typeorm";
 import { Scene, SceneStatus } from "../../entities/Scene";
 import { Request, Response } from "express-serve-static-core";
-import { JSONResponse } from "../middleware";
+import { JSONResponse, allowedToViewScene } from "../middleware";
 import { User, UserPremission } from "../../entities/User";
 
 export function fetchSceneRouter(config:{dataSource: DataSource}) {
@@ -110,15 +110,4 @@ export async function fetchSceneJSON(req:Request,res:Response, config:{dataSourc
             options.push({id: scene.parent.id, title: "Go Back!"});
     }
     return { code: 200, info: 'Success', response: { scene, options, SceneStatus }, redirect: `/scene/${id}`};
-}
-
-function allowedToViewScene(userfn: () => User, scene: Scene) : boolean {
-    if (scene.status == SceneStatus.PUBLIC) return true; //escape if scene is public
-
-    const user = userfn();
-    if (user == undefined) return false; //escape if user is logged off
-
-    return user.id == scene.creator?.id //user created the scene
-        || user.permission >= UserPremission.MODERATOR //user is a moderator or higher
-        || user.view_await_review && scene.status == SceneStatus.AWAITING_REVIEW; //user can view await review scenes
 }

@@ -1,9 +1,10 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
-import moment from 'moment';
-import { Scene } from '../entities/Scene';
 import csrf from 'csurf';
-import { ParamsDictionary } from 'express-serve-static-core';
+import moment from 'moment';
 import { ParsedQs } from 'qs';
+import { Scene, SceneStatus } from '../entities/Scene';
+import { ParamsDictionary } from 'express-serve-static-core';
+import { User, UserPremission } from '../entities/User';
 
 export function configLocals() {
     return function (req:Request, res:Response, next: NextFunction) {
@@ -116,4 +117,15 @@ export function redirectJSON(config:RenderJSONConfig) {
 
         res.redirect(json.redirect);
     }
+}
+
+export function allowedToViewScene(userfn: () => User, scene: Scene) : boolean {
+    if (scene.status == SceneStatus.PUBLIC) return true; //escape if scene is public
+
+    const user = userfn();
+    if (user == undefined) return false; //escape if user is logged off
+
+    return user.id == scene.creator?.id //user created the scene
+        || user.permission >= UserPremission.MODERATOR //user is a moderator or higher
+        || user.view_await_review && scene.status == SceneStatus.AWAITING_REVIEW; //user can view await review scenes
 }

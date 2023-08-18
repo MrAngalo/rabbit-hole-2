@@ -1,7 +1,7 @@
 import express from "express";
 import { DataSource } from "typeorm";
 import { Request, Response } from "express-serve-static-core";
-import { checkAuthenticated } from "./middleware";
+import { allowedToViewScene, checkAuthenticated } from "./middleware";
 import { User, UserPremission } from "../entities/User";
 import { JSONResponse } from "./middleware";
 
@@ -39,6 +39,7 @@ export async function userdataJSON (req:Request, res:Response, config:{dataSourc
         'user.bio',
         'user.ppf_gifId',
         'scenes.id',
+        'scenes.status',
         'scenes.title',
         'scenes.gifId'
     ];
@@ -55,9 +56,13 @@ export async function userdataJSON (req:Request, res:Response, config:{dataSourc
         .where('user.username_lower = :u', { u: username.toLowerCase() })
         .orderBy('scenes.id', 'DESC')
         .getOne();
-    
+
     if (user2 == null) {
         return {code: 400, error: `The user "${username}" does not exist or was removed!`, redirect: '/' };
     }
+
+    const userfn = () => user;
+    user2.scenes = user2.scenes.filter(scene => allowedToViewScene(userfn, scene));
+
     return {code: 200, info: 'Success', response: { user2 }, redirect: `/user/${username}` }
 }
