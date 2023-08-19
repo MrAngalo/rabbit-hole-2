@@ -128,7 +128,7 @@ export async function createSceneJSON(req: Request, res: Response, config: { dat
 
   //this is going to be around 90% of the cases because of new users
   if (status == SceneStatus.AWAITING_REVIEW) {
-    //TODO, send email to admins to notify scene requires validation
+    //TODO: send email to admins to notify scene requires validation
 
   }
 
