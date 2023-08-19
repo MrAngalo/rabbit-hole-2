@@ -1,6 +1,7 @@
 import ejs from 'ejs';
 import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { Scene } from '../entities/Scene';
 
 let transporter: nodemailer.Transporter<SMTPTransport.SentMessageInfo>;
 let sender: string;
@@ -47,4 +48,14 @@ export async function sendResetPasswordEmail(email: string, token: string) {
     let subject = 'Reset Your Password';
     let url = `${process.env.ABSOLUTE_URL}/pwnew?token=${token}`;
     await sendMail(email, subject, 'pwreset', { token, subject, url });
+}
+
+//scene requires
+//scene.id
+//scene.title
+//scene.creator.username
+export async function sendAwaitApprovalEmail(email: string, scene: Scene) {
+    let subject = '[Admin] Scene Requires Approval';
+    let url = `${process.env.ABSOLUTE_URL}/scene/${scene.id}`;
+    await sendMail(email, subject, 'await_approval', { scene, url });
 }

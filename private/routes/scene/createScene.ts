@@ -5,6 +5,7 @@ import { Scene, SceneStatus } from '../../entities/Scene';
 import { tenorIdsExist } from '../../config/tenor-utils';
 import { JSONResponse, checkAuthenticated, redirectJSON } from '../middleware';
 import { DataSource } from 'typeorm';
+import { sendAwaitApprovalEmail } from '../../config/mailer';
 
 export function createSceneRouter(config:{dataSource: DataSource}) {
   
@@ -128,7 +129,18 @@ export async function createSceneJSON(req: Request, res: Response, config: { dat
 
   //this is going to be around 90% of the cases because of new users
   if (status == SceneStatus.AWAITING_REVIEW) {
-    //TODO: send email to admins to notify scene requires validation
+
+    const mods = await config.dataSource.getRepository(User)
+      .createQueryBuilder('user')
+      .select([
+        'user.id',
+        'user.email',
+        'user.permission'
+      ])
+      .where('user.permission >= :p', { p: UserPremission.MODERATOR })
+      .getMany();
+
+    mods.forEach(mod => sendAwaitApprovalEmail(mod.email, scene));
 
   }
 
